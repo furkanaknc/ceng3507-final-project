@@ -7,10 +7,8 @@ export class ViewManager {
     }
 
     static showScreen(screenId) {
-        // First hide all screens
         this.hideAllScreens();
 
-        // Then show the requested screen
         const screen = document.getElementById(screenId);
         if (screen) {
             screen.style.display = 'block';

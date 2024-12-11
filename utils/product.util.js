@@ -41,17 +41,14 @@ export function createProduct(category, price, type, customWeight = null, quanti
         throw new Error(`Insufficient raw product. Can only create ${maxPossibleProducts} complete units of ${unitWeight}g each`);
     }
 
-    // Create new product
     const newId = products.length ? Math.max(...products.map(p => p.id || 0)) + 1 : 1;
     const product = new Product(newId, category, Number(price), type, customWeight);
     product.quantity = Number(quantity);
 
-    // Update raw product storage first
     if (totalRequiredWeight > 0) {
         updateRawProductStorage(-totalRequiredWeight); // Use negative value to decrease
     }
 
-    // Save new product
     products.push(product);
     saveProducts(products);
     
@@ -70,13 +67,11 @@ export function updateProduct(id, updatedData) {
     
     const currentProduct = products[index];
     
-    // Calculate weight difference for raw product update
     const currentWeight = currentProduct.weight * currentProduct.quantity;
     const newWeight = currentProduct.weight * updatedData.quantity;
     const weightDifference = newWeight - currentWeight;
     
     if (weightDifference > 0) {
-        // Check if we have enough raw product for increase
         const availableRawWeight = checkRawProductAvailability();
         if (availableRawWeight < weightDifference) {
             const possibleIncrease = Math.floor(availableRawWeight / currentProduct.weight);
@@ -94,7 +89,6 @@ export function updateProduct(id, updatedData) {
 
     if (existingProduct) {
         if (existingProduct.price === updatedData.price) {
-            // Update raw product storage before merging
             updateRawProductStorage(-weightDifference); // Use negative for increase
             
             existingProduct.quantity += currentProduct.quantity;
@@ -109,8 +103,6 @@ export function updateProduct(id, updatedData) {
         }
     }
 
-    // Update raw product storage before updating product
-    // Use negative sign for increases in quantity
     updateRawProductStorage(-weightDifference); 
 
     const updatedProduct = {

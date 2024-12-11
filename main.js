@@ -4,7 +4,6 @@ import { showPurchaseScreen } from "./public/view/purchase.view.js";
 import { showProductScreen } from "./public/view/product.view.js";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Create sidebar
     const menuToggle = document.createElement('button');
     menuToggle.className = 'menu-toggle';
     menuToggle.innerHTML = '☰';
@@ -14,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.sidebar').classList.toggle('active');
     });
 
-    // Initialize event listeners
     document.getElementById("openFarmerBtn").addEventListener("click", showFarmerScreen);
     document.getElementById("openSearchBtn").addEventListener("click", showSearchScreen);
     document.getElementById("openPurchaseBtn").addEventListener("click", showPurchaseScreen);
