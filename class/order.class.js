@@ -1,9 +1,10 @@
+import { OrderStatus } from '../enum/order-status.enum.js';
+
 export class Order {
-    constructor(id, customerName, contact, shippingAddress, productCategory, quantity, unitPrice, status = OrderStatus.PENDING) {
+    constructor(id, customerId, productId, productCategory, quantity, unitPrice, status = OrderStatus.PENDING) {
         this.id = id;
-        this.customerName = customerName;
-        this.contact = contact;
-        this.shippingAddress = shippingAddress;
+        this.customerId = customerId;
+        this.productId = productId;
         this.productCategory = productCategory;
         this.quantity = quantity;
         this.unitPrice = unitPrice;

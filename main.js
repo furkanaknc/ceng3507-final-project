@@ -2,6 +2,8 @@ import { showFarmerScreen } from "./public/view/farmer.view.js";
 import { showSearchScreen } from "./public/view/search.view.js";
 import { showPurchaseScreen } from "./public/view/purchase.view.js";
 import { showProductScreen } from "./public/view/product.view.js";
+import { showCustomerScreen } from "./public/view/customer.view.js";
+import { showOrderScreen } from "./public/view/order.view.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.createElement('button');
@@ -17,4 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("openSearchBtn").addEventListener("click", showSearchScreen);
     document.getElementById("openPurchaseBtn").addEventListener("click", showPurchaseScreen);
     document.getElementById("openProductBtn").addEventListener("click", showProductScreen);
+    document.getElementById("openCustomerBtn").addEventListener("click", showCustomerScreen);
+    document.getElementById("openOrderBtn").addEventListener("click", showOrderScreen);
 });

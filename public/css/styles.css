@@ -709,6 +709,270 @@ body {
     color: #059669;
 }
 
+/* Customer Management Styles */
+#customerScreen {
+  animation: fadeIn 0.3s ease;
+}
+
+#customerForm {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1rem;
+}
+
+#customerForm input,
+#customerForm button {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#customerForm button {
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#customerForm button:hover {
+  background-color: #2980b9;
+}
+
+#customerList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.customer-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.customer-card:hover {
+  transform: translateY(-5px);
+}
+
+.customer-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.customer-card p {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.customer-card strong {
+  color: var(--primary-color);
+  display: inline-block;
+  width: 80px;
+}
+
+/* Order Management Styles */
+#orderScreen {
+  animation: fadeIn 0.3s ease;
+}
+
+#orderForm {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1rem;
+}
+
+#orderForm select,
+#orderForm input,
+#orderForm button {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#orderForm button {
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#orderForm button:hover {
+  background-color: #2980b9;
+}
+
+.revenue-summary {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: var(--shadow);
+}
+
+.revenue-summary h2 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+#orderList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.order-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+}
+
+.order-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.order-card p {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.order-card strong {
+  color: var(--primary-color);
+  display: inline-block;
+  width: 100px;
+}
+
+.order-card .button-group {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.5rem;
+}
+
+.order-card .status-update {
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#pricePreview {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+#pricePreview p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+#pricePreview span {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.update-btn {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#updateOrderForm {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#updateOrderForm select,
+#updateOrderForm input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#updateOrderForm button {
+  background: var(--secondary-color);
+  color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#updateOrderForm button:hover {
+  background-color: #2980b9;
+}
+
+#updatePricePreview {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 0.5rem 0;
+}
+
+#updatePricePreview p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+#updatePricePreview span {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.modal h2 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .sidebar {
@@ -779,6 +1043,31 @@ body {
     font-size: 1.2rem;
     top: 0.3rem;
     right: 0.5rem;
+  }
+
+  #customerList,
+  #orderList {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+  }
+
+  .customer-card,
+  .order-card {
+      margin-bottom: 1rem;
+  }
+
+  #customerForm,
+  #orderForm {
+      margin: 1rem;
+      padding: 1rem;
+  }
+
+  .revenue-summary {
+      margin: 1rem;
+  }
+
+  .order-card .button-group {
+      grid-template-columns: 1fr;
   }
   
 }
