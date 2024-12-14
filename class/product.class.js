@@ -2,12 +2,12 @@ import { ProductType } from "../enum/product-types.enum.js";
 import { ProductCategory, CategoryWeights } from "../enum/product-category.enum.js";
 
 export class Product {
-    constructor(id, category, price, type = ProductType.FRESH, customWeight = null) {
+    constructor(id, category, price, type = ProductType.FRESH, quantity,customWeight = null) {
         this.id = id;
         this.category = category;
         this.price = price;
         this.type = type;
-        this.quantity = 0;
+        this.quantity = quantity;
         this.weight = category === ProductCategory.PREMIUM ? 
             customWeight : 
             CategoryWeights[category];
@@ -21,16 +21,6 @@ export class Product {
     getTotalWeight() {
         return (this.quantity * this.weight) / 1000; // Convert g to kg
     }
-
-    // getStockStatus() {
-    //     const totalWeight = this.getTotalWeight();
-    //     if (totalWeight <= 100) {
-    //         return 'low';
-    //     } else if (totalWeight <= 250) {
-    //         return 'medium';
-    //     }
-    //     return 'high';
-    // }
 
     getStockStatus() {
         if (this.quantity <= 100) {

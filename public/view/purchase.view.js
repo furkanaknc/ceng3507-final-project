@@ -298,5 +298,19 @@ export function showPurchaseScreen() {
     if (!document.getElementById('purchaseScreen')) {
         createPurchaseScreen();
     }
+
+    ViewManager.registerRefreshHandler('purchaseScreen', () => {
+        displayPurchases();
+        
+        // Refresh farmer options
+        const farmerSelect = document.getElementById('farmerId');
+        if (farmerSelect) {
+            farmerSelect.innerHTML = `
+                <option value="">Select Farmer</option>
+                ${getFarmerOptions()}
+            `;
+        }
+    });
+    
     ViewManager.showScreen('purchaseScreen');
 }

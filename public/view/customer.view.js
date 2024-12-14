@@ -51,7 +51,7 @@ function initCustomerFormListener() {
     document.getElementById('customerForm').addEventListener('submit', e => {
         e.preventDefault();
         try {
-            const customer = createCustomer(
+            createCustomer(
                 document.getElementById('name').value,
                 {
                     phone: document.getElementById('phone').value,
@@ -116,6 +116,20 @@ function initCustomerListListeners() {
             }
         }
     });
+
+    // Add modal close handlers
+    const modal = document.getElementById('updateModal');
+    const closeBtn = modal.querySelector('.close');
+
+    closeBtn.onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    window.onclick = (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
 }
 
 function fillUpdateForm(customer) {
@@ -170,5 +184,10 @@ export function showCustomerScreen() {
     if (!document.getElementById('customerScreen')) {
         createCustomerScreen();
     }
+
+    ViewManager.registerRefreshHandler('customerScreen', () => {
+        displayCustomers(); 
+    });
+
     ViewManager.showScreen('customerScreen');
 }

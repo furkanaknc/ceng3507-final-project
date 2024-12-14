@@ -77,7 +77,7 @@ function initFarmerListListeners() {
 function handleUpdate(id) {
     const farmers = readFarmers();
     const farmer = farmers.find(f => f.id === id);
-   
+
     if (!farmer) return;
 
     document.getElementById('updateId').value = farmer.id;
@@ -90,7 +90,7 @@ function handleUpdate(id) {
 }
 
 function initUpdateFormListener() {
-    document.getElementById('updateForm').addEventListener('submit', function(e) {
+    document.getElementById('updateForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
         const id = Number(document.getElementById('updateId').value);
@@ -105,14 +105,14 @@ function initUpdateFormListener() {
             contact: { phone, email },
             location: { address, city }
         });
-    
+
         document.getElementById('updateModal').style.display = 'none';
         displayFarmers();
     });
 }
 
 function initFarmerFormListener() {
-    document.getElementById("farmerForm").addEventListener("submit", async function(e) {
+    document.getElementById("farmerForm").addEventListener("submit", async function (e) {
         e.preventDefault();
         const name = document.getElementById("name").value;
         const phone = document.getElementById("phone").value;
@@ -122,13 +122,13 @@ function initFarmerFormListener() {
 
         try {
             const farmer = createFarmer(
-                name, 
-                { phone, email }, 
+                name,
+                { phone, email },
                 { address, city }
             );
             displayFarmers();
             this.reset();
-           
+
             showMessage(`Farmer ${farmer.name} added successfully`, 'success');
         } catch (error) {
             showMessage(error.message, 'error');
@@ -150,7 +150,7 @@ function showMessage(message, type) {
 function displayFarmers() {
     const farmers = readFarmers();
     const farmerList = document.getElementById("farmerList");
-    
+
     farmerList.innerHTML = farmers.map(farmer => `
         <div class="farmer-card" data-farmer-id="${farmer.id}">
             <h3>Farmer Details</h3>
@@ -173,7 +173,7 @@ function displayFarmers() {
 function initModalClosing() {
     const modal = document.getElementById('updateModal');
     const closeBtn = modal.querySelector('.close');
-    
+
     // Close when clicking X
     closeBtn.onclick = () => {
         modal.style.display = 'none';
@@ -188,10 +188,13 @@ function initModalClosing() {
 }
 
 export function showFarmerScreen() {
-    if (!document.getElementById("farmerScreen")) {
+    if (!document.getElementById('farmerScreen')) {
         createFarmerScreen();
     }
     
+    ViewManager.registerRefreshHandler('farmerScreen', () => {
+        displayFarmers();
+    });
+    
     ViewManager.showScreen('farmerScreen');
-    displayFarmers();
 }

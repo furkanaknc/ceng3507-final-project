@@ -41,15 +41,14 @@ function performSearch() {
     const searchName = document.getElementById('searchName').value.toLowerCase().trim();
     const searchLocation = document.getElementById('searchLocation').value.toLowerCase().trim();
 
-    // If both fields are empty, show no results
-    if (!searchName && !searchLocation) {
-        displaySearchResults([]);
-        return;
-    }
-
     const filteredFarmers = farmers.filter(farmer => {
         const nameMatch = !searchName || farmer.name.toLowerCase().includes(searchName);
-        const locationMatch = !searchLocation || farmer.location.toLowerCase().includes(searchLocation);
+        
+        // Check both city and address for location search
+        const locationMatch = !searchLocation || (
+            farmer.location.city.toLowerCase().includes(searchLocation) ||
+            farmer.location.address.toLowerCase().includes(searchLocation)
+        );
 
         return nameMatch && locationMatch;
     });
@@ -67,12 +66,16 @@ function displaySearchResults(farmers) {
     searchResults.innerHTML = farmers.map(farmer => `
         <div class="farmer-card">
             <h3>Farmer Details</h3>
-            <p>
-                <strong>ID:</strong> ${farmer.id}<br>
-                <strong>Name:</strong> ${farmer.name}<br>
-                <strong>Contact:</strong> ${farmer.contact}<br>
-                <strong>Location:</strong> ${farmer.location}
-            </p>
+            <div class="contact-info">
+                <strong>Contact Information</strong>
+                Phone: ${farmer.contact.phone}<br>
+                Email: ${farmer.contact.email}
+            </div>
+            <div class="location-info">
+                <strong>Location Details</strong>
+                Address: ${farmer.location.address}<br>
+                City: ${farmer.location.city}
+            </div>
         </div>
     `).join('');
 }
@@ -81,5 +84,15 @@ export function showSearchScreen() {
     if (!document.getElementById('searchScreen')) {
         createSearchScreen();
     }
+
+    ViewManager.registerRefreshHandler('searchScreen', () => {
+        // Re-run search if there are active filters
+        const searchName = document.getElementById('searchName').value;
+        const searchLocation = document.getElementById('searchLocation').value;
+        if (searchName || searchLocation) {
+            performSearch();
+        }
+    });
+    
     ViewManager.showScreen('searchScreen');
 }

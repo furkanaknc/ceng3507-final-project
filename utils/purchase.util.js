@@ -78,27 +78,56 @@ export function updatePurchase(id, updatedData) {
     const purchases = fetchPurchases();
     const index = purchases.findIndex(purchase => purchase.id === id);
     
-    if (index !== -1) {
-        const quantity = updatedData.quantity || purchases[index].quantity;
-        const pricePerKg = updatedData.pricePerKg || purchases[index].pricePerKg;
-        const totalCost = quantity * pricePerKg;
-        
-        purchases[index] = { 
-            ...purchases[index], 
-            ...updatedData,
-            totalCost
-        };
-        
-        savePurchases(purchases);
-        console.log("Purchase updated successfully:", purchases[index]);
-        return purchases[index];
+    if (index === -1) {
+        throw new Error("Purchase not found!");
     }
-    throw new Error("Purchase not found!");
+
+    // Store original quantity for comparison
+    const originalQuantity = purchases[index].quantity;
+    const newQuantity = updatedData.quantity || originalQuantity;
+    
+    // Calculate weight difference in grams
+    const weightDifferenceGrams = (newQuantity - originalQuantity) * 1000;
+    
+    // Update raw products storage
+    const rawProducts = fetchRawProducts();
+    const rawProduct = rawProducts.find(p => p.type === ProductType.RAW);
+    
+    if (rawProduct) {
+        rawProduct.weight += weightDifferenceGrams;
+        saveRawProducts(rawProducts);
+    }
+
+    // Update purchase
+    const pricePerKg = updatedData.pricePerKg || purchases[index].pricePerKg;
+    const totalCost = newQuantity * pricePerKg;
+    
+    purchases[index] = { 
+        ...purchases[index], 
+        ...updatedData,
+        totalCost
+    };
+    
+    savePurchases(purchases);
+    return purchases[index];
 }
 
 export function deletePurchase(id) {
     const purchases = fetchPurchases();
+    const purchase = purchases.find(p => p.id === id);
+    
+    if (purchase) {
+        // Convert kg to grams and subtract from raw products
+        const weightToRemove = purchase.quantity * 1000;
+        const rawProducts = fetchRawProducts();
+        const rawProduct = rawProducts.find(p => p.type === ProductType.RAW);
+        
+        if (rawProduct) {
+            rawProduct.weight -= weightToRemove;
+            saveRawProducts(rawProducts);
+        }
+    }
+
     const updatedPurchases = purchases.filter(purchase => purchase.id !== id);
     savePurchases(updatedPurchases);
-    console.log("Purchase deleted successfully:", id);
 }

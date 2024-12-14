@@ -323,5 +323,28 @@ export function showOrderScreen() {
     if (!document.getElementById('orderScreen')) {
         createOrderScreen();
     }
+
+    ViewManager.registerRefreshHandler('orderScreen', () => {
+        displayOrders();
+        updateRevenueSummary();
+        
+        // Refresh selects
+        const customerSelect = document.getElementById('customerId');
+        const productSelect = document.getElementById('productId');
+        if (customerSelect) {
+            customerSelect.innerHTML = `
+                <option value="">Select Customer</option>
+                ${getCustomerOptions()}
+            `;
+        }
+       
+        if (productSelect) {
+            productSelect.innerHTML = `
+                <option value="">Select Product</option>
+                ${getProductOptions()}
+            `;
+        }
+    });
+    
     ViewManager.showScreen('orderScreen');
 }

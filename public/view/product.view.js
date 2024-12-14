@@ -105,6 +105,8 @@ function initProductFormListener() {
             const quantity = document.getElementById('quantity').value;
             const customWeight = document.getElementById('customWeight').value;
 
+            console.log('quantity', quantity);
+
             // Validate required fields
             if (!category || !type || !price) {
                 throw new Error('Category, Type and Price are required');
@@ -121,7 +123,7 @@ function initProductFormListener() {
                 Number(price),
                 type,
                 category === ProductCategory.PREMIUM ? Number(customWeight) : null,
-                Number(quantity) || 0
+                Number(quantity)
             );
 
             form.reset();
@@ -274,5 +276,10 @@ export function showProductScreen() {
     if (!document.getElementById('productScreen')) {
         createProductScreen();
     }
+
+    ViewManager.registerRefreshHandler('productScreen', () => {
+        displayProducts();
+    });
+    
     ViewManager.showScreen('productScreen');
 }
