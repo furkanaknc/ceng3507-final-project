@@ -1,0 +1,10 @@
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --background-color: #ecf0f1;
+  --text-color: #2c3e50;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --spacing: 1rem;
+  --transition: 0.2s;
+}

@@ -1,0 +1,172 @@
+#orderScreen {
+    animation: fadeIn 0.3s ease;
+}
+
+#orderForm {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 1rem;
+}
+
+#orderForm select,
+#orderForm input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+#orderForm button {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#orderForm button:hover {
+    background-color: #2980b9;
+}
+
+#pricePreview,
+#updatePricePreview {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+}
+
+#pricePreview p,
+#updatePricePreview p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+#pricePreview span,
+#updatePricePreview span {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.filters {
+    max-width: 600px;
+    margin: 2rem auto;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filters select,
+.filters input {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.revenue-summary {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.revenue-summary h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+#revenueDisplay {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-size: 1.2rem;
+}
+
+#orderList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+
+.order-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+}
+
+.order-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.order-card p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.order-card strong {
+    color: var(--primary-color);
+    display: inline-block;
+    width: 120px;
+}
+
+.status-update {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+#updateOrderModal .modal-content {
+    max-width: 500px;
+}
+
+#updateOrderForm {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#updateOrderForm select,
+#updateOrderForm input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+#updateOrderForm button {
+    background: var(--secondary-color);
+    color: white;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#updateOrderForm button:hover {
+    background-color: #2980b9;
+}

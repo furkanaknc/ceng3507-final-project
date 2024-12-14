@@ -1,0 +1,28 @@
+.sidebar {
+  height: 100vh;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--primary-color);
+  padding-top: 2rem;
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar button {
+  width: 90%;
+  margin: 0.5rem auto;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  display: block;
+  transition: background-color 0.2s;
+}
+
+.sidebar button:hover {
+  background-color: var(--secondary-color);
+}

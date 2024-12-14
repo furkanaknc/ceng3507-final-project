@@ -1,0 +1,31 @@
+.card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: calc(var(--spacing) * 1.5);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.farmer-card,
+.customer-card,
+.product-card,
+.purchase-card,
+.order-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.farmer-card:hover,
+.customer-card:hover,
+.product-card:hover,
+.purchase-card:hover,
+.order-card:hover {
+  transform: translateY(-5px);
+}

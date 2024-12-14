@@ -1,0 +1,33 @@
+.form-base {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.form-button {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.form-button:hover {
+  background-color: #2980b9;
+}

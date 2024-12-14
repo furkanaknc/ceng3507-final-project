@@ -1,0 +1,43 @@
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.delete-btn,
+.update-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.update-btn {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.update-btn:hover {
+  background-color: #2980b9;
+}
+
+.export-btn {
+  padding: 0.8rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}

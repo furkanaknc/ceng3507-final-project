@@ -1,0 +1,110 @@
+#customerScreen {
+  animation: fadeIn 0.3s ease;
+}
+
+#customerForm {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1rem;
+}
+
+#customerForm input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#customerForm button {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#customerForm button:hover {
+  background-color: #2980b9;
+}
+
+#customerList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding: 0 1rem;
+}
+
+.customer-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.customer-card:hover {
+  transform: translateY(-5px);
+}
+
+.customer-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.customer-card p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.customer-card strong {
+  color: var(--primary-color);
+  display: inline-block;
+  width: 80px;
+}
+
+#updateModal .modal-content {
+  max-width: 500px;
+}
+
+#updateForm {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#updateForm input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+#updateForm button {
+  background: var(--secondary-color);
+  color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#updateForm button:hover {
+  background-color: #2980b9;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

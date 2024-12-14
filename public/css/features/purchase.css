@@ -1,0 +1,222 @@
+#purchaseScreen {
+    animation: fadeIn 0.3s ease;
+}
+
+#purchaseForm {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 1rem;
+}
+
+#purchaseForm select,
+#purchaseForm input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+#purchaseForm button {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#purchaseForm button:hover {
+    background-color: #2980b9;
+}
+
+.filters {
+    max-width: 600px;
+    margin: 2rem auto;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filters select,
+.filters input {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+#filterBtn {
+    padding: 0.8rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.expense-calculation {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.expense-calculation h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+#expenseResult {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+#purchaseList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+
+.purchase-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+.purchase-card:hover {
+    transform: translateY(-5px);
+}
+
+.purchase-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.purchase-card p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.purchase-card strong {
+    color: var(--primary-color);
+    display: inline-block;
+    width: 120px;
+}
+
+#updatePurchaseModal .modal-content {
+    max-width: 500px;
+}
+
+#updatePurchaseForm {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#updatePurchaseForm select,
+#updatePurchaseForm input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+#updatePurchaseForm button {
+    background: var(--secondary-color);
+    color: white;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#updatePurchaseForm button:hover {
+    background-color: #2980b9;
+}
+.purchase-table {
+    width: 100%;
+    margin-top: 2rem;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.purchase-table th {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: left;
+    padding: 1rem;
+    font-weight: 500;
+}
+
+.purchase-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.purchase-table tr:last-child td {
+    border-bottom: none;
+}
+
+.purchase-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.expense-period {
+    margin: 1rem 0;
+}
+
+#expensePeriod {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-right: 1rem;
+}
+
+#calculateExpenseBtn {
+    padding: 0.8rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#calculateExpenseBtn:hover {
+    background-color: #34495e;
+}
+
+@media (max-width: 768px) {
+    .purchase-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .purchase-table th,
+    .purchase-table td {
+        min-width: 120px;
+    }
+}
