@@ -1,20 +1,23 @@
-@import 'base/variables.css';
-@import 'base/reset.css';
-@import 'base/layout.css';
+@import "base/variables.css";
+@import "base/reset.css";
+@import "base/layout.css";
 
-@import 'components/sidebar.css';
-@import 'components/buttons.css';
-@import 'components/cards.css';
-@import 'components/forms.css';
-@import 'components/modals.css';
-@import 'components/messages.css';
+@import "components/sidebar.css";
+@import "components/buttons.css";
+@import "components/cards.css";
+@import "components/forms.css";
+@import "components/modals.css";
+@import "components/messages.css";
 
-@import 'features/farmer.css';
-@import 'features/customer.css';
-@import 'features/product.css';
-@import 'features/purchase.css';
-@import 'features/order.css';
-@import 'features/search.css';
+@import "features/farmer.css";
+@import "features/customer.css";
+@import "features/product.css";
+@import "features/purchase.css";
+@import "features/order.css";
+@import "features/search.css";
+@import "features/sales-report.css";
+@import "features/financial-analyze.css";
+@import "features/inventory.css";
 
-@import 'utils/animations.css';
-@import 'utils/responsive.css';
+@import "utils/animations.css";
+@import "utils/responsive.css";

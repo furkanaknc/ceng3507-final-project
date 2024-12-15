@@ -2,12 +2,13 @@ import { ProductType } from "../enum/product-types.enum.js";
 import { ProductCategory, CategoryWeights } from "../enum/product-category.enum.js";
 
 export class Product {
-    constructor(id, category, price, type = ProductType.FRESH, quantity,customWeight = null) {
+    constructor(id, category, price, type = ProductType.FRESH, quantity = 0,customWeight = null) {
         this.id = id;
         this.category = category;
         this.price = price;
         this.type = type;
-        this.quantity = quantity;
+        this.quantity = Number(quantity);
+        this.customWeight = customWeight; 
         this.weight = category === ProductCategory.PREMIUM ? 
             customWeight : 
             CategoryWeights[category];

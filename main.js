@@ -4,6 +4,9 @@ import { showPurchaseScreen } from "./public/view/purchase.view.js";
 import { showProductScreen } from "./public/view/product.view.js";
 import { showCustomerScreen } from "./public/view/customer.view.js";
 import { showOrderScreen } from "./public/view/order.view.js";
+import { showSalesReportScreen } from "./public/view/sales-report.view.js";
+import { showFinancialScreen } from "./public/view/financial-analyze.view.js";
+import { showInventoryScreen } from "./public/view/inventory.view.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.createElement('button');
@@ -21,4 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("openProductBtn").addEventListener("click", showProductScreen);
     document.getElementById("openCustomerBtn").addEventListener("click", showCustomerScreen);
     document.getElementById("openOrderBtn").addEventListener("click", showOrderScreen);
+    document.getElementById("openSalesReportBtn").addEventListener("click", showSalesReportScreen);
+    document.getElementById("openFinancialBtn").addEventListener("click", showFinancialScreen);
+    document.getElementById("openInventoryBtn").addEventListener("click", showInventoryScreen);
+
 });

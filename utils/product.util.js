@@ -8,6 +8,8 @@ export function createProduct(category, price, type, customWeight = null, quanti
         throw new Error('All fields are required');
     }
 
+    quantity = Math.max(0, Number(quantity) || 0);
+
     const products = fetchProducts();
     const existingProduct = products.find(p => 
         p.category === category && 
@@ -27,26 +29,25 @@ export function createProduct(category, price, type, customWeight = null, quanti
 
     const totalRequiredWeight = unitWeight * Number(quantity);
     const availableRawWeight = checkRawProductAvailability();
-    
-    console.log('Creating product with:', {
-        category,
-        unitWeight,
-        quantity,
-        totalRequiredWeight,
-        availableRawWeight
-    });
-    
+
     if (availableRawWeight < totalRequiredWeight) {
         const maxPossibleProducts = Math.floor(availableRawWeight / unitWeight);
         throw new Error(`Insufficient raw product. Can only create ${maxPossibleProducts} complete units of ${unitWeight}g each`);
     }
 
     const newId = products.length ? Math.max(...products.map(p => p.id || 0)) + 1 : 1;
-    const product = new Product(newId, category, Number(price), type, customWeight);
-    product.quantity = Number(quantity);
+    
+    const product = new Product(
+        newId, 
+        category, 
+        Number(price), 
+        type, 
+        quantity,
+        customWeight
+    );
 
     if (totalRequiredWeight > 0) {
-        updateRawProductStorage(-totalRequiredWeight); // Use negative value to decrease
+        updateRawProductStorage(-totalRequiredWeight);
     }
 
     products.push(product);
@@ -56,7 +57,9 @@ export function createProduct(category, price, type, customWeight = null, quanti
 }
 
 export function readProducts() {
-    return fetchProducts().map(p => Object.assign(new Product(), p));
+    return fetchProducts().map(p => 
+        new Product(p.id, p.category, p.price, p.type, p.quantity, p.customWeight)
+    );
 }
 
 export function updateProduct(id, updatedData) {
@@ -121,13 +124,29 @@ export function updateProductStock(id, quantityChange) {
     
     if (index === -1) throw new Error('Product not found');
     
-    const newQuantity = products[index].quantity + quantityChange;
-    if (newQuantity < 0) throw new Error('Insufficient stock');
+    const currentProduct = products[index];
+    const newQuantity = currentProduct.quantity + quantityChange;
     
-    products[index].quantity = newQuantity;
+    // Prevent negative quantity
+    if (newQuantity < 0) {
+        throw new Error(`Insufficient stock. Only ${currentProduct.quantity} units available.`);
+    }
+    
+    // Update weight in raw products if needed
+    const weightDifference = quantityChange * currentProduct.weight;
+    if (weightDifference > 0) {
+        const availableRaw = checkRawProductAvailability();
+        if (availableRaw < weightDifference) {
+            throw new Error('Insufficient raw product for this quantity increase');
+        }
+        updateRawProductStorage(-weightDifference);
+    }
+    
+    currentProduct.quantity = newQuantity;
+    products[index] = currentProduct;
     saveProducts(products);
     
-    return products[index];
+    return currentProduct;
 }
 
 export function deleteProduct(id) {

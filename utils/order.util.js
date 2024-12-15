@@ -1,11 +1,14 @@
 import { Order } from '../class/order.class.js';
 import { fetchOrders, saveOrders } from '../storage/order.storage.js';
 import { readProducts,updateProductStock } from './product.util.js';
-import { SalesReport } from '../class/sales-report.class.js';
 import { OrderStatus } from '../enum/order-status.enum.js';
 import { readCustomers } from './customer.util.js';
 
 export function createOrder(customerId, productId, quantity) {
+    if (!quantity || quantity <= 0) {
+        throw new Error('Quantity must be greater than 0');
+    }
+
     const customers = readCustomers();
     if (!customers.find(c => c.id === customerId)) {
         throw new Error('Invalid customer ID');
@@ -25,18 +28,20 @@ export function createOrder(customerId, productId, quantity) {
     const orders = fetchOrders();
     const newId = orders.length ? Math.max(...orders.map(o => o.id)) + 1 : 1;
 
-    const order = new Order(
-        newId,
-        customerId,
-        productId,
-        product.category,
-        quantity,
-        product.price,
-        OrderStatus.PENDING
-    );
-
     try {
-        updateProductStock(product.id, -quantity);
+        // First try to update stock
+        updateProductStock(productId, -quantity);
+        
+        const order = new Order(
+            newId,
+            customerId,
+            productId,
+            product.category,
+            quantity,
+            product.price,
+            OrderStatus.PENDING
+        );
+
         orders.push(order);
         saveOrders(orders);
         return order;
@@ -90,6 +95,19 @@ export function getOrdersByCustomer(customerId) {
     return orders.filter(o => o.customerId === customerId);
 }
 
+export function readOrders() {
+    return fetchOrders().map(o => new Order(
+        o.id,
+        o.customerId,
+        o.productId,
+        o.productCategory,
+        o.quantity,
+        o.unitPrice,
+        o.status,
+        o.orderDate
+    ));
+}
+
 export function calculateRevenue(startDate = null, endDate = null, category = null) {
     const orders = fetchOrders();
     return orders
@@ -103,10 +121,6 @@ export function calculateRevenue(startDate = null, endDate = null, category = nu
         .reduce((total, order) => total + order.totalPrice, 0);
 }
 
-export function generateSalesReport(startDate = null, endDate = null) {
-    const orders = fetchOrders();
-    return new SalesReport(orders, startDate, endDate);
-}
 
 export function searchOrders(query) {
     const orders = fetchOrders();

@@ -1,0 +1,162 @@
+#salesReportScreen {
+    animation: fadeIn 0.3s ease;
+    padding: 1rem;
+}
+
+.report-filters {
+    max-width: 800px;
+    margin: 2rem auto;
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.report-filters input,
+.report-filters button {
+    padding: 0.8rem;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.report-filters input {
+    flex: 1;
+    border: 1px solid #ddd;
+}
+
+.report-filters button {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 120px;
+}
+
+.report-filters button:hover {
+    background-color: #2980b9;
+}
+
+.report-summary {
+    max-width: 800px;
+    margin: 2rem auto;
+    display: grid;
+    gap: 2rem;
+}
+
+.total-revenue {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.total-revenue h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+#totalRevenue {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.category-breakdown {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.category-breakdown h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+#categoryBreakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.category-item {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.category-item h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.category-item p {
+    margin: 0.5rem 0;
+    color: var(--text-color);
+}
+
+.category-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.category-section h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.category-total {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.size-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.size-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+    .report-filters {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .report-filters button {
+        width: 100%;
+    }
+
+    #categoryBreakdown {
+        grid-template-columns: 1fr;
+    }
+
+    .total-revenue {
+        padding: 1.5rem;
+    }
+
+    #totalRevenue {
+        font-size: 2rem;
+    }
+}
