@@ -3,6 +3,9 @@ import { fetchOrders, saveOrders } from '../storage/order.storage.js';
 import { readProducts,updateProductStock } from './product.util.js';
 import { OrderStatus } from '../enum/order-status.enum.js';
 import { readCustomers } from './customer.util.js';
+import { readStorages } from './storage.util.js';
+import { saveStorages } from '../storage/storage.storage.js';
+import { Storage } from '../class/storage.class.js';
 
 export function createOrder(customerId, productId, quantity) {
     if (!quantity || quantity <= 0) {
@@ -21,15 +24,47 @@ export function createOrder(customerId, productId, quantity) {
         throw new Error('Product not found');
     }
 
-    if (product.quantity < quantity) {
-        throw new Error(`Only ${product.quantity} units available in stock`);
+    // Get all storages and their contents
+    const storages = readStorages().map(s => {
+        const storage = new Storage(s.id, s.location, s.name, s.maxCapacity);
+        storage.currentCapacity = s.currentCapacity || 0;
+        storage.contents = s.contents || { raw: [], processed: [] };
+        return storage;
+    });
+
+    // Find storages containing the product
+    let remainingQuantity = quantity;
+    const updatedStorages = storages.map(storage => {
+        if (remainingQuantity <= 0) return storage;
+
+        const processedProduct = storage.contents.processed.find(p => p.productId === productId);
+        if (!processedProduct) return storage;
+
+        const quantityToDeduct = Math.min(remainingQuantity, processedProduct.quantity);
+        processedProduct.quantity -= quantityToDeduct;
+        storage.currentCapacity -= (quantityToDeduct * product.weight) / 1000; // Convert to kg
+        remainingQuantity -= quantityToDeduct;
+
+        // Remove product from storage if quantity is 0
+        if (processedProduct.quantity <= 0) {
+            storage.contents.processed = storage.contents.processed.filter(p => p.productId !== productId);
+        }
+
+        return storage;
+    });
+
+    if (remainingQuantity > 0) {
+        throw new Error(`Insufficient stock in storages. Missing ${remainingQuantity} units`);
     }
 
+    // Save updated storages
+    saveStorages(updatedStorages);
+
+    // Create and save order
     const orders = fetchOrders();
     const newId = orders.length ? Math.max(...orders.map(o => o.id)) + 1 : 1;
 
     try {
-        // First try to update stock
         updateProductStock(productId, -quantity);
         
         const order = new Order(
@@ -96,16 +131,22 @@ export function getOrdersByCustomer(customerId) {
 }
 
 export function readOrders() {
-    return fetchOrders().map(o => new Order(
-        o.id,
-        o.customerId,
-        o.productId,
-        o.productCategory,
-        o.quantity,
-        o.unitPrice,
-        o.status,
-        o.orderDate
-    ));
+    const orders = fetchOrders();
+    return orders.map(order => {
+        // Convert JSON data to Order instance
+        const orderObj = new Order(
+            order.id,
+            order.customerId,
+            order.productId,
+            order.productCategory,
+            order.quantity,
+            order.unitPrice,
+            order.status
+        );
+        // Preserve the original order date
+        orderObj.orderDate = order.orderDate;
+        return orderObj;
+    });
 }
 
 export function calculateRevenue(startDate = null, endDate = null, category = null) {

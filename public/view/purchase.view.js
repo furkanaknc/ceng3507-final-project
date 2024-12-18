@@ -1,6 +1,7 @@
 import { createPurchase, readPurchases, updatePurchase, deletePurchase } from '../../utils/purchase.util.js';
 import { readFarmers } from '../../utils/farmer.util.js';
 import { ViewManager } from '../../utils/view-manager.util.js';
+import { readStorages } from '../../utils/storage.util.js';
 
 export function createPurchaseScreen() {
     const mainContent = document.querySelector('.main-content');
@@ -15,6 +16,10 @@ export function createPurchaseScreen() {
             <select id="farmerId" required>
                 <option value="">Select Farmer</option>
                 ${getFarmerOptions()}
+            </select>
+            <select id="storageId" required>
+                <option value="">Select Storage</option>
+                ${getStorageOptions()}
             </select>
             <input type="date" id="date" required />
             <input type="number" id="quantity" placeholder="Quantity (kg)" required step="0.01" min="0" />
@@ -85,16 +90,24 @@ function getFarmerOptions() {
     ).join('');
 }
 
+function getStorageOptions() {
+    const storages = readStorages();
+    return storages.map(storage =>
+        `<option value="${storage.id}">${storage.name} (${storage.location}) - Available: ${storage.maxCapacity - storage.currentCapacity}kg</option>`
+    ).join('');
+}
+
 function initPurchaseFormListener() {
     document.getElementById('purchaseForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const farmerId = Number(document.getElementById('farmerId').value);
+        const storageId = Number(document.getElementById('storageId').value);
         const date = document.getElementById('date').value;
         const quantity = Number(document.getElementById('quantity').value);
         const pricePerKg = Number(document.getElementById('pricePerKg').value);
 
         try {
-            const purchase = createPurchase(farmerId, date, quantity, pricePerKg);
+            const purchase = createPurchase(farmerId, storageId, date, quantity, pricePerKg);
             e.target.reset();
             displayPurchases();
             showMessage('Purchase recorded successfully', 'success');
@@ -120,7 +133,7 @@ function initUpdateFormListener() {
                 quantity: updateQuantity,
                 pricePerKg: updatePricePerKg
             });
-            
+
             closeModal('updatePurchaseModal');
             displayPurchases();
             showMessage('Purchase updated successfully', 'success');
@@ -230,6 +243,7 @@ function initSortingListener() {
 function displayPurchases() {
     const purchases = readPurchases();
     const farmers = readFarmers();
+    const storages = readStorages();
     const sortBy = document.getElementById('sortBy').value;
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -262,14 +276,18 @@ function displayPurchases() {
     });
 
     const purchaseList = document.getElementById('purchaseList');
+
     purchaseList.innerHTML = filteredPurchases.map(purchase => {
         const farmer = farmers.find(f => f.id === purchase.farmerId);
+        const storage = storages.find(s => s.id === purchase.storageId);
+        
         return `
             <div class="purchase-card" data-purchase-id="${purchase.id}">
                 <h3>Purchase Details</h3>
                 <p>
                     <strong>Date:</strong> ${new Date(purchase.date).toLocaleDateString()}<br>
                     <strong>Farmer:</strong> ${farmer?.name || 'Unknown'}<br>
+                    <strong>Storage:</strong> ${storage?.name || 'Unknown'}<br>
                     <strong>Quantity:</strong> ${purchase.quantity} kg<br>
                     <strong>Price/kg:</strong> $${purchase.pricePerKg}<br>
                     <strong>Total Cost:</strong> $${purchase.totalCost.toFixed(2)}
@@ -301,7 +319,7 @@ export function showPurchaseScreen() {
 
     ViewManager.registerRefreshHandler('purchaseScreen', () => {
         displayPurchases();
-        
+
         // Refresh farmer options
         const farmerSelect = document.getElementById('farmerId');
         if (farmerSelect) {
@@ -311,6 +329,6 @@ export function showPurchaseScreen() {
             `;
         }
     });
-    
+
     ViewManager.showScreen('purchaseScreen');
 }

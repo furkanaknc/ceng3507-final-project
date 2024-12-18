@@ -1,4 +1,4 @@
-export const INVENTORY_STORAGE_KEY = 'inventory';
+export const INVENTORY_STORAGE_KEY = "inventory";
 
 export function fetchInventory() {
     const inventory = localStorage.getItem(INVENTORY_STORAGE_KEY);

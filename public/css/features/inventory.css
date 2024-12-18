@@ -1,291 +1,145 @@
-/* Main container styles */
 #inventoryScreen {
     padding: 2rem;
     animation: fadeIn 0.3s ease;
 }
 
-/* Inventory actions */
-.inventory-actions {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-}
-
-.inventory-actions button {
-    padding: 0.8rem 1.5rem;
-    border-radius: 6px;
-    border: none;
-    background: var(--primary-color);
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.inventory-actions button:hover {
-    background: var(--secondary-color);
-}
-
-/* Filters */
-.inventory-filters {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-}
-
-.inventory-filters select {
-    padding: 0.8rem;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    flex: 1;
-}
-
-/* Inventory List */
-.inventory-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.inventory-card {
+.inventory-summary {
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: var(--shadow);
-    position: relative;
-    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 2rem 0;
 }
 
-.inventory-card:hover {
-    transform: translateY(-5px);
+.product-totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
-.inventory-card h3 {
+.total-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.total-item h3 {
     color: var(--primary-color);
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
-.inventory-card p {
-    line-height: 1.6;
-}
-
-.inventory-card strong {
-    display: inline-block;
-    width: 120px;
-    color: var(--text-color);
-}
-
-/* Stock status indicators */
-.low-stock { border-left: 4px solid #e74c3c; }
-.medium-stock { border-left: 4px solid #f1c40f; }
-.sufficient-stock { border-left: 4px solid #2ecc71; }
-
-.restock-alert {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: #e74c3c;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-}
-
-/* Modal styles */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    margin: 10% auto;
-    padding: 2rem;
-    max-width: 500px;
-    border-radius: 12px;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    cursor: pointer;
-    font-size: 1.5rem;
-}
-
-/* Form styles */
-#inventoryForm, #transferForm {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-#inventoryForm input,
-#inventoryForm select,
-#transferForm input,
-#transferForm select {
-    padding: 0.8rem;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-}
-
-#inventoryForm button,
-#transferForm button {
-    background: var(--primary-color);
-    color: white;
-    padding: 1rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-#inventoryForm button:hover,
-#transferForm button:hover {
-    background: var(--secondary-color);
-}
-
-.card-actions {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    gap: 0.5rem;
-}
-
-.edit-btn, .delete-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.edit-btn {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.edit-btn:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
-}
-
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.delete-btn:hover {
-    background-color: #c82333;
-    transform: translateY(-2px);
-}
-
-/* Edit Modal */
-#editInventoryModal .modal-content {
-    max-width: 500px;
-    padding: 2rem;
-}
-
-#editInventoryForm {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-#editInventoryForm input,
-#editInventoryForm select {
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-#editInventoryForm button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s ease;
-}
-
-#editInventoryForm button:hover {
-    background-color: var(--secondary-color);
-}
-
-/* Delete Confirmation Modal */
-#deleteConfirmModal .modal-content {
-    max-width: 400px;
-    text-align: center;
-}
-
-#deleteConfirmModal h2 {
-    color: #dc3545;
-    margin-bottom: 1rem;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+/* Storage Grid Styles */
+.storage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
     margin-top: 2rem;
 }
 
-#confirmDeleteBtn {
-    background-color: #dc3545;
+.storage-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.storage-header {
+    background: var(--primary-color);
     color: white;
+    padding: 1.5rem;
 }
 
-#confirmDeleteBtn:hover {
-    background-color: #c82333;
+.capacity-info {
+    margin-top: 1rem;
 }
 
-#cancelDeleteBtn {
-    background-color: #6c757d;
-    color: white;
+.capacity-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.5rem;
 }
 
-#cancelDeleteBtn:hover {
-    background-color: #5a6268;
+.capacity-fill {
+    height: 100%;
+    background: white;
+    transition: width 0.3s ease;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-    .inventory-actions,
-    .inventory-filters {
-        flex-direction: column;
-    }
+/* Product Group Styles */
+.storage-content {
+    padding: 1.5rem;
+}
 
-    .inventory-list {
-        grid-template-columns: 1fr;
-    }
+.product-group {
+    margin-bottom: 1.5rem;
+}
 
-    .modal-content {
-        margin: 5% auto;
-        width: 90%;
-    }
+.product-group h3 {
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
 
-    .card-actions {
-        position: relative;
-        top: 0;
-        right: 0;
-        margin-bottom: 1rem;
-    }
+.product-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.product-item p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.empty-storage {
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+}
+
+.inventory-filters {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.turnover-analysis {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 2rem 0;
+}
+
+.turnover-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.turnover-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.turnover-item h3 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.turnover-item p {
+    margin: 0.25rem 0;
+    color: #666;
 }

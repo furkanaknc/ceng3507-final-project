@@ -17,6 +17,7 @@
 @import "features/search.css";
 @import "features/sales-report.css";
 @import "features/financial-analyze.css";
+@import "features/storage.css";
 @import "features/inventory.css";
 
 @import "utils/animations.css";

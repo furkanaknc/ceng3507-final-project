@@ -3,6 +3,7 @@ import { ViewManager } from '../../utils/view-manager.util.js';
 import { ProductType } from '../../enum/product-types.enum.js';
 import { Product } from '../../class/product.class.js';
 import { ProductCategory, CategoryWeights } from '../../enum/product-category.enum.js';
+import { readStorages } from '../../utils/storage.util.js';
 
 function getProductTypeOptions() {
     return Object.entries(ProductType)
@@ -14,6 +15,8 @@ export function createProductScreen() {
     const mainContent = document.querySelector('.main-content');
     const productScreen = document.createElement('div');
     productScreen.id = 'productScreen';
+
+    const storages = readStorages();
 
     productScreen.innerHTML = `
         <h1>Product Management</h1>
@@ -29,6 +32,14 @@ export function createProductScreen() {
                 <option value="">Select Type</option>
                 ${getProductTypeOptions()}
             </select>
+            <select id="storageId" required>
+                <option value="">Select Storage</option>
+                ${storages.map(storage => `
+                    <option value="${storage.id}">
+                        ${storage.name} (${storage.location}) - Available: ${storage.maxCapacity - storage.currentCapacity}kg
+                    </option>
+                `).join('')}
+            </select>
             <input type="number" id="price" placeholder="Price ($)" required min="0" step="0.01" />
             <input type="number" id="quantity" placeholder="Quantity (packages)" required min="0" step="1" />
             <div id="customWeightDiv" style="display:none">
@@ -39,7 +50,7 @@ export function createProductScreen() {
 
         <div class="product-list" id="productList"></div>
 
-          <div id="updateProductModal" class="modal">
+        <div id="updateProductModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Update Product</h2>
@@ -54,6 +65,14 @@ export function createProductScreen() {
                     <select id="updateType" required>
                         <option value="">Select Type</option>
                         ${getProductTypeOptions()}
+                    </select>
+                    <select id="updateStorageId" required>
+                        <option value="">Select Storage</option>
+                        ${storages.map(storage => `
+                            <option value="${storage.id}">
+                                ${storage.name} (${storage.location}) - Available: ${storage.maxCapacity - storage.currentCapacity}kg
+                            </option>
+                        `).join('')}
                     </select>
                     <input type="number" id="updatePrice" placeholder="Price ($)" required min="0" step="0.01" />
                     <input type="number" id="updateQuantity" placeholder="Quantity (packages)" required min="0" step="1" />
@@ -74,6 +93,7 @@ export function createProductScreen() {
         displayProducts();
     }, 0);
 }
+
 
 function initProductFormListener() {
     const form = document.getElementById('productForm');
@@ -97,33 +117,39 @@ function initProductFormListener() {
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-
         try {
             const category = document.getElementById('category').value;
             const type = document.getElementById('type').value;
-            const price = document.getElementById('price').value;
-            const quantity = document.getElementById('quantity').value;
-            const customWeight = document.getElementById('customWeight').value;
+            const storageId = Number(document.getElementById('storageId').value);
+            const price = Number(document.getElementById('price').value);
+            const quantity = Number(document.getElementById('quantity').value);
+            const customWeight = document.getElementById('customWeight')?.value;
 
-            console.log('quantity', quantity);
+            console.log('Form Values:', {
+                category,
+                type,
+                storageId,
+                price,
+                quantity,
+                customWeight
+            });
 
-            // Validate required fields
-            if (!category || !type || !price) {
-                throw new Error('Category, Type and Price are required');
+            // Validate values before sending
+            if (!storageId) {
+                throw new Error('Please select a storage');
             }
 
-            // Additional validation for PREMIUM category
-            if (category === ProductCategory.PREMIUM && !customWeight) {
-                throw new Error('Custom weight is required for Premium category');
+            if (!quantity || quantity <= 0) {
+                throw new Error('Quantity must be greater than 0');
             }
 
-            // Create product with appropriate parameters
             createProduct(
                 category,
-                Number(price),
+                price,
                 type,
+                storageId,
                 category === ProductCategory.PREMIUM ? Number(customWeight) : null,
-                Number(quantity)
+                quantity
             );
 
             form.reset();
@@ -131,6 +157,19 @@ function initProductFormListener() {
             showMessage('Product created successfully', 'success');
         } catch (error) {
             showMessage(error.message, 'error');
+        }
+    });
+
+    document.getElementById('category').addEventListener('change', (e) => {
+        const customWeightDiv = document.getElementById('customWeightDiv');
+        const customWeightInput = document.getElementById('customWeight');
+
+        if (e.target.value === ProductCategory.PREMIUM) {
+            customWeightDiv.style.display = 'block';
+            customWeightInput.required = true;
+        } else {
+            customWeightDiv.style.display = 'none';
+            customWeightInput.required = false;
         }
     });
 }
@@ -211,26 +250,35 @@ function initUpdateFormListener() {
 
 
 function displayProducts() {
-    const products = readProducts().map(p => Object.assign(new Product(), p));
+    const products = readProducts();
+    const storages = readStorages();
     const productList = document.getElementById('productList');
 
-    productList.innerHTML = products.map(product => `
-        <div class="product-card" data-product-id="${product.id}">
-            <div class="stock-indicator" style="background-color: ${product.getStatusColor()}"></div>
-            <h3><span class="product-category">${product.category}</span> <span class="product-type">${product.type}</span></h3>
-            <p>
-                <strong>Weight:</strong> ${product.weight}g<br>
-                <strong>Price:</strong> $${product.getFormattedPrice()}<br>
-                <strong>In Stock:</strong> ${product.quantity} packages<br>
-                <strong>Total Weight:</strong> ${product.getTotalWeight()}kg<br>
-                <strong>Status:</strong> ${product.getStockStatus().toUpperCase()}
-            </p>
-            <div class="button-group">
-                <button class="update-btn">Update</button>
-                <button class="delete-btn">Delete</button>
+    productList.innerHTML = products.map(product => {
+        const storage = storages.find(s => s.id === product.storageId);
+        
+        return `
+            <div class="product-card" data-product-id="${product.id}">
+                <div class="stock-indicator" style="background-color: ${product.getStatusColor()}"></div>
+                <h3>
+                    <span class="product-category">${product.category}</span>
+                    <span class="product-type">${product.type}</span>
+                </h3>
+                <p>
+                    <strong>Storage:</strong> ${storage ? `${storage.name} (${storage.location})` : 'Not assigned'}<br>
+                    <strong>Weight:</strong> ${product.weight}g<br>
+                    <strong>Price:</strong> $${product.getFormattedPrice()}<br>
+                    <strong>In Stock:</strong> ${product.quantity} packages<br>
+                    <strong>Total Weight:</strong> ${product.getTotalWeight()}kg<br>
+                    <strong>Status:</strong> ${product.getStockStatus().toUpperCase()}
+                </p>
+                <div class="button-group">
+                    <button class="update-btn">Update</button>
+                    <button class="delete-btn">Delete</button>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function fillUpdateForm(product) {
@@ -280,6 +328,6 @@ export function showProductScreen() {
     ViewManager.registerRefreshHandler('productScreen', () => {
         displayProducts();
     });
-    
+
     ViewManager.showScreen('productScreen');
 }

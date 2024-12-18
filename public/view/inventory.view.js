@@ -1,8 +1,8 @@
+import { readStorages } from '../../utils/storage.util.js';
 import { ViewManager } from '../../utils/view-manager.util.js';
-import { getInventoryStatus, createInventoryItem, generateInventoryReport, transferToInventory, deleteInventoryItem, updateInventoryItem } from '../../utils/inventory.util.js';
-import { readRawProducts } from '../../storage/raw-product.storage.js';
-import { CategoryWeights } from '../../enum/product-category.enum.js';
+import { ProductType } from '../../enum/product-types.enum.js';
 import { readProducts } from '../../utils/product.util.js';
+import { readOrders } from '../../utils/order.util.js';
 
 export function createInventoryScreen() {
     const mainContent = document.querySelector('.main-content');
@@ -10,325 +10,280 @@ export function createInventoryScreen() {
     inventoryScreen.id = 'inventoryScreen';
 
     inventoryScreen.innerHTML = `
-        <div class="inventory-actions">
-            <button id="transferFromRawBtn">Transfer from Raw Products</button>
-            <button id="transferFromProcessedBtn">Transfer from Processed Products</button>
-            <button id="generateReportBtn">Generate Report</button>
-        </div>
-
+        <h1>Storage Inventory</h1>
+        
         <div class="inventory-filters">
-            <select id="typeFilter">
-                <option value="">All Types</option>
-                <option value="RAW">Raw Product</option>
-                <option value="FRESH">Fresh</option>
-                <option value="FROZEN">Frozen</option>
-                <option value="ORGANIC">Organic</option>
-            </select>
-            <select id="categoryFilter">
-                <option value="">All Categories</option>
-                <option value="SMALL">Small</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="LARGE">Large</option>
-                <option value="FAMILY_PACK">Family Pack</option>
-                <option value="BULK_PACK">Bulk Pack</option>
-            </select>
-            <select id="statusFilter">
-                <option value="">All Statuses</option>
-                <option value="LOW">Low Stock</option>
-                <option value="MEDIUM">Medium Stock</option>
-                <option value="SUFFICIENT">Sufficient Stock</option>
+            <select id="reportPeriod">
+                <option value="all">All Time</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
             </select>
         </div>
 
-        <div class="inventory-list" id="inventoryList"></div>
-
-        <div id="transferModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Transfer to Inventory</h2>
-                <form id="transferForm">
-                    <select id="sourceProduct" required>
-                        <option value="">Select Product</option>
-                    </select>
-                    <input type="number" id="transferQuantity" min="1" placeholder="Quantity" required>
-                    <input type="text" id="storageLocation" placeholder="Storage Location" required>
-                    <button type="submit">Transfer</button>
-                </form>
-            </div>
+        <div class="inventory-summary">
+            <h2>Total Inventory Summary</h2>
+            <div class="product-totals"></div>
         </div>
 
-        <div id="editInventoryModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Update Inventory Item</h2>
-                <form id="editInventoryForm">
-                    <input type="hidden" id="editItemId">
-                    <input type="number" id="editQuantity" placeholder="Quantity" required>
-                    <input type="number" id="editReorderLevel" placeholder="Reorder Level" required>
-                    <button type="submit">Update</button>
-                </form>
-            </div>
+        <div class="turnover-analysis">
+            <h2>Turnover Analysis</h2>
+            <div class="turnover-stats"></div>
         </div>
 
-        <div id="deleteConfirmModal" class="modal">
-            <div class="modal-content">
-                <h2>Confirm Delete</h2>
-                <p>Are you sure you want to delete this item?</p>
-                <div class="modal-actions">
-                    <button id="confirmDeleteBtn">Delete</button>
-                    <button id="cancelDeleteBtn">Cancel</button>
-                </div>
-            </div>
-        </div>
+        <div class="storage-grid"></div>
     `;
 
     mainContent.appendChild(inventoryScreen);
-    initInventoryListeners();
+    initInventoryFilters();
     displayInventory();
 }
 
+function initInventoryFilters() {
+    document.getElementById('reportPeriod').addEventListener('change', displayInventory);
+}
 
 function displayInventory() {
-    const inventory = getInventoryStatus();
-    const typeFilter = document.getElementById('typeFilter').value;
-    const categoryFilter = document.getElementById('categoryFilter').value;
-    const statusFilter = document.getElementById('statusFilter').value;
+    const storages = readStorages();
+    const products = readProducts();
+    const orders = readOrders();
+    const period = document.getElementById('reportPeriod').value;
 
-    const filteredInventory = inventory.filter(item =>
-        (!typeFilter || item.type === typeFilter) &&
-        (!categoryFilter || item.category === categoryFilter) &&
-        (!statusFilter || item.status === statusFilter)
-    );
+    const { startDate, endDate } = getDateRange(period);
 
-    const inventoryList = document.getElementById('inventoryList');
-    inventoryList.innerHTML = filteredInventory.map(item => {
-        let quantityDisplay;
-        let reorderLevelDisplay;
+    // Filter orders by date range
+    const filteredOrders = orders.filter(order => {
+        const orderDate = new Date(order.orderDate);
+        return (!startDate || orderDate >= startDate) &&
+            (!endDate || orderDate <= endDate);
+    });
 
-        if (item.type === 'RAW') {
-            quantityDisplay = `${item.quantity}kg`;
-            reorderLevelDisplay = `${item.reorderLevel}kg`;
-        } else {
-            const packageWeight = CategoryWeights[item.category];
-            const totalWeightKg = ((item.quantity * packageWeight) / 1000).toFixed(2);
-            quantityDisplay = `${item.quantity} packages (${totalWeightKg}kg)`;
-            reorderLevelDisplay = `${item.reorderLevel} packages`;
-        }
+    const turnoverRates = calculateTurnoverRates(products, filteredOrders);
+
+    const turnoverStats = document.querySelector('.turnover-stats');
+    turnoverStats.innerHTML = `
+        ${Object.entries(turnoverRates).map(([category, data]) => {
+        const turnoverPercentage = (data.rate * 100).toFixed(2);
+        return `
+                <div class="turnover-item">
+                    <h3>${category}</h3>
+                    <p>Turnover Rate: ${turnoverPercentage}%</p>
+                    <p>Total Orders: ${data.orders}</p>
+                    <p>Total Sold: ${data.totalSold} units</p>
+                    <p>Average Daily Sales: ${data.averageDailySales.toFixed(2)} units/day</p>
+                    <p>Period: ${period}</p>
+                </div>
+            `;
+    }).join('')}
+    `;
+
+    // Calculate totals across all storages
+    const totalInventory = {
+        raw: {
+            quantity: 0,
+            weight: 0
+        },
+        processed: {}
+    };
+
+    storages.forEach(storage => {
+        // Sum raw products
+        storage.contents.raw.forEach(item => {
+            totalInventory.raw.quantity += item.quantity;
+            totalInventory.raw.weight += item.quantity;
+        });
+
+        // Sum processed products
+        storage.contents.processed.forEach(item => {
+            const product = products.find(p => p.id === item.productId);
+            if (!product) return;
+
+            const key = `${product.type}-${product.category}`;
+            if (!totalInventory.processed[key]) {
+                totalInventory.processed[key] = {
+                    type: product.type,
+                    category: product.category,
+                    quantity: 0,
+                    weight: 0
+                };
+            }
+            totalInventory.processed[key].quantity += item.quantity;
+            totalInventory.processed[key].weight += item.totalWeight;
+        });
+    });
+
+
+    // Group all products from storage contents
+    const productTotals = {};
+
+    storages.forEach(storage => {
+        // Process raw products
+        storage.contents.raw.forEach(item => {
+            const key = 'RAW';
+            if (!productTotals[key]) {
+                productTotals[key] = {
+                    type: ProductType.RAW,
+                    totalQuantity: 0,
+                    totalWeight: 0
+                };
+            }
+            productTotals[key].totalQuantity += item.quantity;
+            productTotals[key].totalWeight += item.quantity; // Raw products quantity is in kg
+        });
+
+        // Process processed products
+        storage.contents.processed.forEach(item => {
+            const product = products.find(p => p.id === item.productId);
+            if (!product) return;
+
+            const key = `${product.type}-${product.category}`;
+            if (!productTotals[key]) {
+                productTotals[key] = {
+                    type: product.type,
+                    category: product.category,
+                    totalQuantity: 0,
+                    totalWeight: 0
+                };
+            }
+            productTotals[key].totalQuantity += item.quantity;
+            productTotals[key].totalWeight += item.totalWeight;
+        });
+    });
+
+    // Display total inventory
+    const productTotalsDiv = document.querySelector('.product-totals');
+    productTotalsDiv.innerHTML = `
+        ${totalInventory.raw.quantity > 0 ? `
+            <div class="total-item">
+                <h3>Raw Materials</h3>
+                <p>Total Quantity: ${totalInventory.raw.quantity.toFixed(2)} kg</p>
+                <p>Total Weight: ${totalInventory.raw.weight.toFixed(2)} kg</p>
+            </div>
+        ` : ''}
+        ${Object.entries(totalInventory.processed).map(([key, product]) => `
+            <div class="total-item">
+                <h3>${product.type} - ${product.category}</h3>
+                <p>Total Packages: ${product.quantity}</p>
+                <p>Total Weight: ${product.weight.toFixed(2)} kg</p>
+            </div>
+        `).join('')}
+    `;
+
+    // Display storage contents
+    const storageGrid = document.querySelector('.storage-grid');
+    storageGrid.innerHTML = storages.map(storage => {
+        const totalWeight = storage.currentCapacity;
+        const capacityPercentage = (totalWeight / storage.maxCapacity) * 100;
 
         return `
-            <div class="inventory-card ${item.status.toLowerCase()}-stock">
-                <div class="card-actions">
-                    <button class="edit-btn" data-id="${item.id}">Edit</button>
-                    <button class="delete-btn" data-id="${item.id}">Delete</button>
+            <div class="storage-card">
+                <div class="storage-header">
+                    <h2>${storage.name} (${storage.location})</h2>
+                    <div class="capacity-info">
+                        <div>Capacity: ${totalWeight.toFixed(2)}kg / ${storage.maxCapacity}kg</div>
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: ${capacityPercentage}%"></div>
+                        </div>
+                    </div>
                 </div>
-                <h3>${item.type}${item.category !== 'RAW' ? ` - ${item.category}` : ''}</h3>
-                <p>
-                    <strong>Quantity:</strong> ${quantityDisplay}<br>
-                    <strong>Reorder Level:</strong> ${reorderLevelDisplay}<br>
-                    <strong>Status:</strong> ${item.status}<br>
-                    <strong>Location:</strong> ${item.storageLocation}<br>
-                    <strong>Next Restock:</strong> ${new Date(item.restockDate).toLocaleDateString()}<br>
-                    <strong>Last Updated:</strong> ${new Date(item.lastUpdated).toLocaleString()}
-                </p>
-                ${item.needsRestock ? '<div class="restock-alert">Restock Needed!</div>' : ''}
+                <div class="storage-content">
+                    ${storage.contents.raw.length === 0 && storage.contents.processed.length === 0 ?
+                '<div class="empty-storage">No items stored</div>' :
+                `
+                            ${storage.contents.raw.length > 0 ? `
+                                <div class="product-group">
+                                    <h3>Raw Products</h3>
+                                    ${storage.contents.raw.map(item => `
+                                        <div class="product-item">
+                                            <p><strong>Quantity:</strong> ${item.quantity}kg</p>
+                                            <p><strong>Total Weight:</strong> ${item.quantity}kg</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            ${storage.contents.processed.length > 0 ? `
+                                <div class="product-group">
+                                    <h3>Processed Products</h3>
+                                    ${storage.contents.processed.map(item => {
+                    const product = products.find(p => p.id === item.productId);
+                    return `
+                                            <div class="product-item">
+                                                <p><strong>Product:</strong> ${product ? `${product.type} - ${product.category}` : 'Unknown'}</p>
+                                                <p><strong>Quantity:</strong> ${item.quantity} packages</p>
+                                                <p><strong>Total Weight:</strong> ${item.totalWeight}kg</p>
+                                            </div>
+                                        `;
+                }).join('')}
+                                </div>
+                            ` : ''}
+                        `
+            }
+                </div>
             </div>
         `;
     }).join('');
+}
 
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', () => showEditModal(btn.dataset.id));
+function getDateRange(period) {
+    const now = new Date();
+    const startDate = new Date();
+
+    switch (period) {
+        case 'daily':
+            startDate.setHours(0, 0, 0, 0);
+            break;
+        case 'weekly':
+            startDate.setDate(now.getDate() - 7);
+            break;
+        case 'monthly':
+            startDate.setDate(1); // Start of current month
+            break;
+        case 'all':
+            return { startDate: null, endDate: null };
+        default:
+            return { startDate: null, endDate: null };
+    }
+
+    return { startDate, endDate: now };
+}
+
+function calculateTurnoverRates(products, orders) {
+    const turnoverRates = {};
+
+    products.forEach(product => {
+        const productOrders = orders.filter(o => o.productId === product.id);
+        const totalOrdered = productOrders.reduce((sum, order) => sum + order.quantity, 0);
+        const daysInPeriod = Math.max(getDaysInPeriod(orders), 1); // At least 1 day
+
+        turnoverRates[product.category] = {
+            rate: totalOrdered / (product.quantity + totalOrdered), // Turnover rate as ratio
+            orders: productOrders.length,
+            totalSold: totalOrdered,
+            averageDailySales: totalOrdered / daysInPeriod
+        };
     });
 
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', () => confirmDelete(btn.dataset.id));
-    });
+    return turnoverRates;
 }
 
-function initInventoryListeners() {
-    const transferFromRawBtn = document.getElementById('transferFromRawBtn');
-    const transferFromProcessedBtn = document.getElementById('transferFromProcessedBtn');
-    const generateReportBtn = document.getElementById('generateReportBtn');
 
-    if (transferFromRawBtn) {
-        transferFromRawBtn.addEventListener('click', () => showTransferModal('RAW'));
-    }
+function getDaysInPeriod(orders) {
+    if (orders.length === 0) return 1; // Prevent division by zero
 
-    if (transferFromProcessedBtn) {
-        transferFromProcessedBtn.addEventListener('click', () => showTransferModal('PROCESSED'));
-    }
+    const dates = orders.map(o => new Date(o.orderDate));
+    const earliest = new Date(Math.min(...dates));
+    const latest = new Date(Math.max(...dates));
 
-    if (generateReportBtn) {
-        generateReportBtn.addEventListener('click', generateInventoryReport);
-    }
+    const diffTime = Math.abs(latest - earliest);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    document.getElementById('typeFilter').addEventListener('change', displayInventory);
-    document.getElementById('categoryFilter').addEventListener('change', displayInventory);
-    document.getElementById('statusFilter').addEventListener('change', displayInventory);
-
-    const editForm = document.getElementById('editInventoryForm');
-    if (editForm) {
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const itemId = Number(document.getElementById('editItemId').value);
-            
-            try {
-                const updates = {
-                    quantity: Number(document.getElementById('editQuantity').value),
-                    reorderLevel: Number(document.getElementById('editReorderLevel').value)
-                };
-
-                updateInventoryItem(itemId, updates);
-                closeModal('editInventoryModal');
-                displayInventory();
-                showMessage('Item updated successfully', 'success');
-            } catch (error) {
-                showMessage(error.message, 'error');
-            }
-        });
-    }
-}
-
-function showTransferModal(sourceType) {
-    const modal = document.getElementById('transferModal');
-    const sourceProduct = document.getElementById('sourceProduct');
-    const transferForm = document.getElementById('transferForm');
-    const closeBtn = modal.querySelector('.close');
-    
-    if (!modal || !sourceProduct || !transferForm) {
-        console.error('Required elements not found');
-        return;
-    }
-
-    // Create new form to clear old listeners
-    const newForm = transferForm.cloneNode(true);
-    transferForm.parentNode.replaceChild(newForm, transferForm);
-
-    // Set source type
-    newForm.setAttribute('data-source-type', sourceType);
-    
-    // Clear and populate options
-    sourceProduct.innerHTML = '<option value="">Select Product</option>';
-    
-    if (sourceType === 'RAW') {
-        const rawProducts = readRawProducts();
-        console.log('Raw products:', rawProducts);
-        
-        if (rawProducts && rawProducts.length > 0) {
-            const rawProduct = rawProducts[0];
-            if (rawProduct) {
-                const weightInKg = (rawProduct.weight / 1000).toFixed(2);
-                sourceProduct.innerHTML += `
-                    <option value="RAW">Raw Blueberries (${weightInKg}kg)</option>
-                `;
-            }
-        }
-    } else {
-        const products = readProducts();
-        console.log('Processed products:', products);
-        
-        if (products && products.length > 0) {
-            products.forEach(product => {
-                if (product.quantity > 0) {
-                    sourceProduct.innerHTML += `
-                        <option value="${product.id}">
-                            ${product.type} - ${product.category} 
-                            (${product.quantity} packages)
-                        </option>
-                    `;
-                }
-            });
-        }
-    }
-
-    // Add form submit listener
-    newForm.addEventListener('submit', handleTransferSubmit);
-
-    // Add close button listener
-    closeBtn.addEventListener('click', () => closeModal('transferModal'));
-
-    // Show modal
-    modal.style.display = 'block';
-}
-
-function handleTransferSubmit(e) {
-    e.preventDefault();
-    const sourceType = e.target.getAttribute('data-source-type');
-    const sourceId = document.getElementById('sourceProduct').value;
-    const quantity = Number(document.getElementById('transferQuantity').value);
-    const location = document.getElementById('storageLocation').value;
-
-    try {
-        transferToInventory(sourceType, sourceId, quantity, location);
-        closeModal('transferModal');
-        displayInventory();
-        showMessage('Transfer successful', 'success');
-    } catch (error) {
-        showMessage(error.message, 'error');
-    }
-}
-
-function showEditModal(itemId) {
-    const inventory = getInventoryStatus();
-    const item = inventory.find(i => i.id === Number(itemId));
-    
-    if (!item) return;
-
-    document.getElementById('editItemId').value = item.id;
-    document.getElementById('editQuantity').value = item.quantity;
-    document.getElementById('editReorderLevel').value = item.reorderLevel;
-
-    document.getElementById('editInventoryModal').style.display = 'block';
-}
-
-function confirmDelete(itemId) {
-    const modal = document.getElementById('deleteConfirmModal');
-    modal.style.display = 'block';
-
-    const confirmBtn = document.getElementById('confirmDeleteBtn');
-    const cancelBtn = document.getElementById('cancelDeleteBtn');
-
-    confirmBtn.onclick = () => {
-        deleteInventoryItem(Number(itemId));
-        modal.style.display = 'none';
-        displayInventory();
-        showMessage('Item deleted successfully', 'success');
-    };
-
-    cancelBtn.onclick = () => {
-        modal.style.display = 'none';
-    };
-}
-
-function showMessage(message, type) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-    messageDiv.textContent = message;
-
-    const container = document.querySelector('.main-content');
-    container.insertBefore(messageDiv, container.firstChild);
-
-    setTimeout(() => messageDiv.remove(), 3000);
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-    }
+    return diffDays || 1; // Return at least 1 day
 }
 
 export function showInventoryScreen() {
     if (!document.getElementById('inventoryScreen')) {
         createInventoryScreen();
-        // Ekranı oluşturduktan sonra listener'ları ekleyin
-        setTimeout(() => {
-            initInventoryListeners();
-            displayInventory();
-        }, 0);
     }
-    
-    ViewManager.registerRefreshHandler('inventoryScreen', displayInventory);
     ViewManager.showScreen('inventoryScreen');
+    ViewManager.registerRefreshHandler('inventoryScreen', displayInventory);
 }

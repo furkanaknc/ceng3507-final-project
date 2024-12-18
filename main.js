@@ -6,6 +6,7 @@ import { showCustomerScreen } from "./public/view/customer.view.js";
 import { showOrderScreen } from "./public/view/order.view.js";
 import { showSalesReportScreen } from "./public/view/sales-report.view.js";
 import { showFinancialScreen } from "./public/view/financial-analyze.view.js";
+import { showStorageScreen } from "./public/view/storage.view.js";
 import { showInventoryScreen } from "./public/view/inventory.view.js";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("openOrderBtn").addEventListener("click", showOrderScreen);
     document.getElementById("openSalesReportBtn").addEventListener("click", showSalesReportScreen);
     document.getElementById("openFinancialBtn").addEventListener("click", showFinancialScreen);
+    document.getElementById("openStorageBtn").addEventListener("click", showStorageScreen);
     document.getElementById("openInventoryBtn").addEventListener("click", showInventoryScreen);
 
 });

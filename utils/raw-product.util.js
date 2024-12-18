@@ -18,11 +18,6 @@ export function updateRawProductStorage(weightChange) {
     let remainingChange = Math.abs(weightChange);
     const isDecrease = weightChange < 0;
 
-    console.log('Updating raw product storage:', {
-        weightChange,
-        currentRawProducts: rawProducts
-    });
-
     const updatedRawProducts = rawProducts.map(product => {
         if (product.type === ProductType.RAW && remainingChange > 0) {
             if (isDecrease) {
@@ -43,7 +38,6 @@ export function updateRawProductStorage(weightChange) {
         return product;
     }).filter(Boolean);
 
-    console.log('Updated raw products:', updatedRawProducts);
     saveRawProducts(updatedRawProducts);
 }
 

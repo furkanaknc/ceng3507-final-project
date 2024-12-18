@@ -48,7 +48,6 @@ export function updateFarmer(id, updatedData) {
     if (index !== -1) {
         farmers[index] = { ...farmers[index], ...updatedData };
         saveFarmers(farmers);
-        console.log("Farmer updated successfully:", farmers[index]);
     } else {
         console.log("Farmer not found!");
     }
@@ -59,7 +58,6 @@ export function deleteFarmer(id) {
     const farmers = fetchFarmers();
     const updatedFarmers = farmers.filter(farmer => farmer.id !== id);
     saveFarmers(updatedFarmers);
-    console.log("Farmer deleted successfully:", id);
 }
 
 
