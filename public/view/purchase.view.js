@@ -55,23 +55,26 @@ export function createPurchaseScreen() {
         </div>
 
         <!-- Update Modal -->
-        <div id="updatePurchaseModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Update Purchase</h2>
-                <form id="updatePurchaseForm">
-                    <input type="hidden" id="updateId">
-                    <select id="updateFarmerId" required>
-                        <option value="">Select Farmer</option>
-                        ${getFarmerOptions()}
-                    </select>
-                    <input type="date" id="updateDate" required />
-                    <input type="number" id="updateQuantity" placeholder="Quantity (kg)" required step="0.01" min="0" />
-                    <input type="number" id="updatePricePerKg" placeholder="Price per kg" required step="0.01" min="0" />
-                    <button type="submit">Update Purchase</button>
-                </form>
-            </div>
+         <div id="updatePurchaseModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Update Purchase</h2>
+            <form id="updatePurchaseForm">
+                <input type="hidden" id="updateId">
+                <select id="updateFarmerId" required>
+                    <option value="">Select Farmer</option>
+                    ${getFarmerOptions()}
+                </select>
+                <select id="updateStorageId" required>
+                    <option value="">Select Storage</option>
+                    ${getStorageOptions()}
+                </select>
+                <input type="date" id="updateDate" required />
+                <input type="number" id="updatePricePerKg" placeholder="Price per kg" required step="0.01" min="0" />
+                <button type="submit">Update Purchase</button>
+            </form>
         </div>
+    </div>
     `;
 
     mainContent.appendChild(purchaseScreen);
@@ -122,15 +125,15 @@ function initUpdateFormListener() {
         e.preventDefault();
         const updateId = Number(document.getElementById('updateId').value);
         const updateFarmerId = Number(document.getElementById('updateFarmerId').value);
+        const updateStorageId = Number(document.getElementById('updateStorageId').value);
         const updateDate = document.getElementById('updateDate').value;
-        const updateQuantity = Number(document.getElementById('updateQuantity').value);
         const updatePricePerKg = Number(document.getElementById('updatePricePerKg').value);
 
         try {
             updatePurchase(updateId, {
                 farmerId: updateFarmerId,
+                storageId: updateStorageId,
                 date: updateDate,
-                quantity: updateQuantity,
                 pricePerKg: updatePricePerKg
             });
 
@@ -184,8 +187,8 @@ function initPurchaseListListeners() {
 function fillUpdateForm(purchase) {
     document.getElementById('updateId').value = purchase.id;
     document.getElementById('updateFarmerId').value = purchase.farmerId;
+    document.getElementById('updateStorageId').value = purchase.storageId;
     document.getElementById('updateDate').value = purchase.date.split('T')[0];
-    document.getElementById('updateQuantity').value = purchase.quantity;
     document.getElementById('updatePricePerKg').value = purchase.pricePerKg;
 }
 

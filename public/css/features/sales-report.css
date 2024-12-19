@@ -60,7 +60,7 @@
     font-size: 1.2rem;
 }
 
-#totalRevenue {
+#netRevenue {
     font-size: 2.5rem;
     color: var(--primary-color);
     font-weight: bold;
@@ -156,7 +156,7 @@
         padding: 1.5rem;
     }
 
-    #totalRevenue {
+    #netRevenue {
         font-size: 2rem;
     }
 }

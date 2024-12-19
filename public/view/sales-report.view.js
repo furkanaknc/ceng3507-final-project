@@ -19,8 +19,10 @@ export function createSalesReportScreen() {
 
         <div class="report-summary">
             <div class="total-revenue">
-                <h3>Total Revenue</h3>
-                <p id="totalRevenue">$0.00</p>
+                <h3>Revenue Summary</h3>
+                <p>Net Revenue: $<span id="netRevenue">0.00</span></p>
+                <p>Gross Revenue: $<span id="totalRevenue">0.00</span></p>
+                <p>Tax Amount: $<span id="totalTax">0.00</span></p>
             </div>
             
             <div class="category-breakdown">
@@ -42,24 +44,43 @@ function initReportListeners() {
 function displayReport() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
-    const orders = readOrders();
     
-    // Create sales report instance
-    const salesReport = new SalesReport(orders, startDate, endDate);
-    
-    // Update UI with report data
-    document.getElementById('totalRevenue').textContent = 
-        `$${salesReport.totalRevenue.toFixed(2)}`;
+    // Get tax rate from financial analysis screen
+    const financialTaxRate = document.querySelector('#financialScreen #taxRate');
+    const taxRate = financialTaxRate ? Number(financialTaxRate.value) / 100 : 0.18;
 
-    const breakdown = document.getElementById('categoryBreakdown');
-    breakdown.innerHTML = Object.entries(salesReport.unitsSoldByCategory)
-        .map(([category, units]) => `
-            <div class="category-section">
-                <h3>${category}</h3>
-                <div class="category-total">
-                    <p>Total Units: ${units}</p>
-                    <p>Total Revenue: $${salesReport.revenueByCategory[category].toFixed(2)}</p>
-                </div>
+    const orders = readOrders();
+    const filteredOrders = orders.filter(order => {
+        if (!startDate && !endDate) return true;
+        
+        const orderDate = new Date(order.orderDate);
+        orderDate.setHours(0, 0, 0, 0);
+        
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+        
+        if (start) start.setHours(0, 0, 0, 0);
+        if (end) end.setHours(23, 59, 59, 999);
+
+        return (!start || orderDate >= start) && (!end || orderDate <= end);
+    });
+    
+    const salesReport = new SalesReport(filteredOrders, startDate, endDate, taxRate);
+    
+    // Update display with calculations including tax
+    document.getElementById('totalRevenue').textContent = salesReport.totalRevenue.toFixed(2);
+    document.getElementById('totalTax').textContent = salesReport.taxAmount.toFixed(2);
+    document.getElementById('netRevenue').textContent = salesReport.netRevenue.toFixed(2);
+
+
+    // Update category breakdown
+    const categoryBreakdown = document.getElementById('categoryBreakdown');
+    categoryBreakdown.innerHTML = Object.entries(salesReport.revenueByCategory)
+        .map(([category, revenue]) => `
+            <div class="category-item">
+                <h4>${category}</h4>
+                <p>Units Sold: ${salesReport.unitsSoldByCategory[category]}</p>
+                <p>Revenue: $${revenue.toFixed(2)}</p>
             </div>
         `).join('');
 }

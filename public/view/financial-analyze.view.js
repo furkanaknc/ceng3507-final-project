@@ -72,6 +72,16 @@ function filterByDateRange(items, startDate, endDate) {
 
 function initFinancialListeners() {
     document.getElementById('generateReport').addEventListener('click', displayFinancialReport);
+    
+    // Add tax rate change listener
+    document.getElementById('taxRate').addEventListener('change', () => {
+        displayFinancialReport();
+    });
+    
+    // Add input event for real-time updates
+    document.getElementById('taxRate').addEventListener('input', () => {
+        displayFinancialReport();
+    });
 }
 
 export function showFinancialScreen() {

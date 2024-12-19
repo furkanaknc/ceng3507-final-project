@@ -28,6 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("openSalesReportBtn").addEventListener("click", showSalesReportScreen);
     document.getElementById("openFinancialBtn").addEventListener("click", showFinancialScreen);
     document.getElementById("openStorageBtn").addEventListener("click", showStorageScreen);
-    document.getElementById("openInventoryBtn").addEventListener("click", showInventoryScreen);
+    document.getElementById("openInventoryBtn").addEventListener("click", showInventoryScreen);    
 
 });

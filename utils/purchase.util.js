@@ -3,9 +3,9 @@ import { Purchase } from "../class/purchase.class.js";
 import { readFarmers } from "./farmer.util.js";
 import { saveRawProducts, fetchRawProducts } from "../storage/raw-product.storage.js";
 import { ProductType } from "../enum/product-types.enum.js";
-import { fetchStorages } from "../storage/storage.storage.js";
+import { saveStorages, fetchStorages } from "../storage/storage.storage.js";
 import { Storage } from "../class/storage.class.js";
-import { saveStorages } from "../storage/storage.storage.js";
+import { readStorages } from "./storage.util.js";
 
 export function createPurchase(farmerId, storageId, date, quantity, pricePerKg) {
 
@@ -47,11 +47,11 @@ export function createPurchase(farmerId, storageId, date, quantity, pricePerKg) 
 
     try {
         storage.addRawFromPurchase(newId, quantity);
-        
+
         // Update raw products weight
         const rawProducts = fetchRawProducts();
         const weightInGrams = quantity * 1000;
-        
+
         if (rawProducts.length > 0) {
             const rawProduct = rawProducts.find(p => p.type === ProductType.RAW);
             if (rawProduct) {
@@ -85,37 +85,57 @@ export function readPurchasesByFarmer(farmerId) {
 }
 
 export function updatePurchase(id, updatedData) {
+    const { quantity, ...allowedUpdates } = updatedData;
+
     const purchases = fetchPurchases();
-    const index = purchases.findIndex(purchase => purchase.id === id);
+    const index = purchases.findIndex(p => p.id === id);
 
-    if (index === -1) {
-        throw new Error("Purchase not found!");
+    if (index === -1) throw new Error('Purchase not found');
+
+    const currentPurchase = purchases[index];
+
+    if (allowedUpdates.storageId && allowedUpdates.storageId !== currentPurchase.storageId) {
+        const storages = readStorages().map(s => {
+            const storage = new Storage(s.id, s.location, s.name, s.maxCapacity);
+            storage.currentCapacity = s.currentCapacity || 0;
+            storage.contents = s.contents || { raw: [], processed: [] };
+            return storage;
+        });
+
+        // Remove from old storage
+        const oldStorage = storages.find(s => s.id === currentPurchase.storageId);
+        if (oldStorage) {
+            oldStorage.removeRawProduct(currentPurchase.id);
+        }
+
+        // Add to new storage
+        const newStorage = storages.find(s => s.id === allowedUpdates.storageId);
+        if (!newStorage) {
+            throw new Error('New storage not found');
+        }
+
+        // Check new storage capacity
+        if (newStorage.currentCapacity + currentPurchase.quantity > newStorage.maxCapacity) {
+            throw new Error(`Insufficient capacity in new storage ${newStorage.name}`);
+        }
+
+        // Add to new storage
+        newStorage.addRawFromPurchase(currentPurchase.id, currentPurchase.quantity);
+
+        // Save storage changes
+        saveStorages(storages);
     }
 
-    // Store original quantity for comparison
-    const originalQuantity = purchases[index].quantity;
-    const newQuantity = updatedData.quantity || originalQuantity;
+    // Calculate new total cost with updated price if provided
+    const pricePerKg = allowedUpdates.pricePerKg || currentPurchase.pricePerKg;
+    const totalCost = currentPurchase.quantity * pricePerKg;
 
-    // Calculate weight difference in grams
-    const weightDifferenceGrams = (newQuantity - originalQuantity) * 1000;
-
-    // Update raw products storage
-    const rawProducts = fetchRawProducts();
-    const rawProduct = rawProducts.find(p => p.type === ProductType.RAW);
-
-    if (rawProduct) {
-        rawProduct.weight += weightDifferenceGrams;
-        saveRawProducts(rawProducts);
-    }
-
-    // Update purchase
-    const pricePerKg = updatedData.pricePerKg || purchases[index].pricePerKg;
-    const totalCost = newQuantity * pricePerKg;
-
+    // Update purchase with only allowed fields
     purchases[index] = {
-        ...purchases[index],
-        ...updatedData,
-        totalCost
+        ...currentPurchase,
+        ...allowedUpdates,
+        totalCost,
+        quantity: currentPurchase.quantity
     };
 
     savePurchases(purchases);
@@ -127,6 +147,20 @@ export function deletePurchase(id) {
     const purchase = purchases.find(p => p.id === id);
 
     if (purchase) {
+        // Update storage
+        const storages = readStorages().map(s => {
+            const storage = new Storage(s.id, s.location, s.name, s.maxCapacity);
+            storage.currentCapacity = s.currentCapacity || 0;
+            storage.contents = s.contents || { raw: [], processed: [] };
+            return storage;
+        });
+
+        const storage = storages.find(s => s.id === purchase.storageId);
+        if (storage) {
+            storage.removeRawProduct(purchase.id);
+            saveStorages(storages);
+        }
+
         // Convert kg to grams and subtract from raw products
         const weightToRemove = purchase.quantity * 1000;
         const rawProducts = fetchRawProducts();
