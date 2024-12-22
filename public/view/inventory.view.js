@@ -4,6 +4,9 @@ import { ProductType } from '../../enum/product-types.enum.js';
 import { readProducts } from '../../utils/product.util.js';
 import { readOrders } from '../../utils/order.util.js';
 
+// Create main screen layout with filters and summary sections
+// Show storage capacity and contents
+// Display turnover analysis
 export function createInventoryScreen() {
     const mainContent = document.querySelector('.main-content');
     const inventoryScreen = document.createElement('div');
@@ -43,6 +46,9 @@ function initInventoryFilters() {
     document.getElementById('reportPeriod').addEventListener('change', displayInventory);
 }
 
+// Show current storage status and product totals
+// Calculate turnover rates for each product category
+// Display capacity bars and product details
 function displayInventory() {
     const storages = readStorages();
     const products = readProducts();
@@ -247,6 +253,9 @@ function getDateRange(period) {
     return { startDate, endDate: now };
 }
 
+// Calculate product turnover based on sales history
+// Show average daily sales and total units sold
+// Display period-specific statistics
 function calculateTurnoverRates(products, orders) {
     const turnoverRates = {};
 

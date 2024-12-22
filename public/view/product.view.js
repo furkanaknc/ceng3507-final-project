@@ -1,7 +1,6 @@
 import { createProduct, readProducts, updateProduct, updateProductStock, deleteProduct } from '../../utils/product.util.js';
 import { ViewManager } from '../../utils/view-manager.util.js';
 import { ProductType } from '../../enum/product-types.enum.js';
-import { Product } from '../../class/product.class.js';
 import { ProductCategory, CategoryWeights } from '../../enum/product-category.enum.js';
 import { readStorages } from '../../utils/storage.util.js';
 
@@ -11,6 +10,9 @@ function getProductTypeOptions() {
         .join('');
 }
 
+// Set up product creation form with category and type selection
+// Show list of current products with stock levels
+// Add update/delete functionality for existing products
 export function createProductScreen() {
     const mainContent = document.querySelector('.main-content');
     const productScreen = document.createElement('div');
@@ -94,7 +96,9 @@ export function createProductScreen() {
     }, 0);
 }
 
-
+// Handle new product form submissions
+// Validate product details before saving
+// Update stock levels in selected storage
 function initProductFormListener() {
     const form = document.getElementById('productForm');
     if (!form) {
@@ -248,7 +252,9 @@ function initUpdateFormListener() {
     };
 }
 
-
+// Show all products with their current status
+// Display stock levels and storage location
+// Add status indicators for low stock
 function displayProducts() {
     const products = readProducts();
     const storages = readStorages();

@@ -5,6 +5,8 @@ import { fetchOrders } from '../../storage/order.storage.js';
 import { readCustomers } from '../../utils/customer.util.js';
 import { readProducts } from '../../utils/product.util.js';
 
+// Creates customer dropdown options using customer data
+// Maps customer ID to name for selection
 function getCustomerOptions() {
     const customers = readCustomers();
     return customers.map(customer =>
@@ -12,6 +14,9 @@ function getCustomerOptions() {
     ).join('');
 }
 
+// Creates product dropdown with details as data attributes
+// Shows category, type and price in option text
+// Used in order form for product selection
 function getProductOptions() {
     const products = readProducts();
     return products.map(product =>
@@ -24,6 +29,9 @@ function getProductOptions() {
     ).join('');
 }
 
+// Create order form with customer and product selection
+// Show running total and price calculations
+// Display order history and status updates
 export function createOrderScreen() {
     const mainContent = document.querySelector('.main-content');
     const orderScreen = document.createElement('div');
@@ -133,6 +141,9 @@ function initPriceCalculation() {
     updatePrices();
 }
 
+// Handle new order creation
+// Check product availability
+// Update stock levels after order
 function initOrderFormListener() {
     document.getElementById('orderForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -217,6 +228,9 @@ function initUpdateOrderFormListener() {
     });
 }
 
+// Calculate total revenue for selected period
+// Show sales trends and comparisons
+// Update revenue display in real time
 function updateRevenueSummary() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -228,6 +242,9 @@ function updateRevenueSummary() {
     `;
 }
 
+// Show all orders with customer details
+// Display order status and delivery info
+// Calculate and show revenue summaries
 function displayOrders() {
     const status = document.getElementById('statusFilter').value;
     const customerSearch = document.getElementById('customerSearch').value;

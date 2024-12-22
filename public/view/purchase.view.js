@@ -3,6 +3,7 @@ import { readFarmers } from '../../utils/farmer.util.js';
 import { ViewManager } from '../../utils/view-manager.util.js';
 import { readStorages } from '../../utils/storage.util.js';
 
+// Create purchase screen with form, filters and purchase history
 export function createPurchaseScreen() {
     const mainContent = document.querySelector('.main-content');
     const purchaseScreen = document.createElement('div');
@@ -86,6 +87,7 @@ export function createPurchaseScreen() {
     displayPurchases();
 }
 
+// Get farmer options for dropdown selection
 function getFarmerOptions() {
     const farmers = readFarmers();
     return farmers.map(farmer =>
@@ -93,6 +95,7 @@ function getFarmerOptions() {
     ).join('');
 }
 
+// Get storage options showing capacity and location
 function getStorageOptions() {
     const storages = readStorages();
     return storages.map(storage =>
@@ -100,6 +103,9 @@ function getStorageOptions() {
     ).join('');
 }
 
+// Record new raw material purchases
+// Update storage capacity
+// Show success/error messages
 function initPurchaseFormListener() {
     document.getElementById('purchaseForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -120,6 +126,8 @@ function initPurchaseFormListener() {
     });
 }
 
+// Update existing purchase details
+// Adjust storage contents if needed
 function initUpdateFormListener() {
     document.getElementById('updatePurchaseForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -146,6 +154,8 @@ function initUpdateFormListener() {
     });
 }
 
+// Handle card button clicks
+// Show update modal or delete purchase
 function initPurchaseListListeners() {
     const purchaseList = document.getElementById('purchaseList');
     purchaseList.addEventListener('click', async (e) => {

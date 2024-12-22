@@ -3,6 +3,9 @@ import { readOrders } from '../../utils/order.util.js';
 import { readPurchases } from '../../utils/purchase.util.js';
 import { FinancialAnalysis } from '../../class/financial-analyze.class.js';
 
+// Creates the main screen with filters and summary cards
+// Filter section has date range and tax rate inputs
+// Summary cards show income, expenses, tax and profit
 export function createFinancialScreen() {
     const mainContent = document.querySelector('.main-content');
     const financialScreen = document.createElement('div');
@@ -45,6 +48,9 @@ export function createFinancialScreen() {
     displayFinancialReport();
 }
 
+// Gets data from date filters and tax rate
+// Calculates financial metrics for selected period
+// Updates the summary cards with new numbers
 function displayFinancialReport() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -65,6 +71,8 @@ function displayFinancialReport() {
     document.getElementById('netProfit').textContent = `$${report.netProfit}`;
 }
 
+// Filters orders and purchases between selected dates
+// Used to get period-specific calculations
 function filterByDateRange(items, startDate, endDate) {
     return items.filter(item => {
         const itemDate = new Date(item.date || item.orderDate);
@@ -73,6 +81,9 @@ function filterByDateRange(items, startDate, endDate) {
     });
 }
 
+// Watches for "Generate Report" button clicks
+// Handles tax rate changes for instant calculations  
+// Sets up CSV export buttons for basic and detailed reports
 function initFinancialListeners() {
     const generateBtn = document.getElementById('generateReport');
     const taxRate = document.getElementById('taxRate');

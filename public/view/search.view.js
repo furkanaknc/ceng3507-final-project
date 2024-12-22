@@ -1,6 +1,7 @@
 import { readFarmers } from '../../utils/farmer.util.js';
 import { ViewManager } from '../../utils/view-manager.util.js';
 
+// Create search interface with filters and results area
 export function createSearchScreen() {
     const mainContent = document.querySelector('.main-content');
 
@@ -24,6 +25,7 @@ export function createSearchScreen() {
     initSearchListeners();
 }
 
+// Handle search button clicks and clear filters
 function initSearchListeners() {
     const searchBtn = document.getElementById('searchBtn');
     const clearBtn = document.getElementById('clearSearch');
@@ -36,6 +38,9 @@ function initSearchListeners() {
     });
 }
 
+// Filter farmers based on search criteria
+// Search by name and location
+// Case insensitive matching
 function performSearch() {
     const farmers = readFarmers();
     const searchName = document.getElementById('searchName').value.toLowerCase().trim();
@@ -43,7 +48,7 @@ function performSearch() {
 
     const filteredFarmers = farmers.filter(farmer => {
         const nameMatch = !searchName || farmer.name.toLowerCase().includes(searchName);
-        
+
         // Check both city and address for location search
         const locationMatch = !searchLocation || (
             farmer.location.city.toLowerCase().includes(searchLocation) ||
@@ -56,6 +61,9 @@ function performSearch() {
     displaySearchResults(filteredFarmers);
 }
 
+// Display filtered farmer results as cards
+// Show farmer details in cards
+// Display contact and location info
 function displaySearchResults(farmers) {
     const searchResults = document.getElementById('searchResults');
     if (farmers.length === 0) {
@@ -68,6 +76,7 @@ function displaySearchResults(farmers) {
             <h3>Farmer Details</h3>
             <div class="contact-info">
                 <strong>Contact Information</strong>
+                Name: ${farmer.name}<br>
                 Phone: ${farmer.contact.phone}<br>
                 Email: ${farmer.contact.email}
             </div>
@@ -93,6 +102,6 @@ export function showSearchScreen() {
             performSearch();
         }
     });
-    
+
     ViewManager.showScreen('searchScreen');
 }

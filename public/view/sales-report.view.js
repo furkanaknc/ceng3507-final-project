@@ -2,6 +2,7 @@ import { ViewManager } from '../../utils/view-manager.util.js';
 import { readOrders } from '../../utils/order.util.js';
 import { SalesReport } from '../../class/sales-report.class.js';
 
+// Create report screen with filters and summary sections
 export function createSalesReportScreen() {
     const mainContent = document.querySelector('.main-content');
     const salesReportScreen = document.createElement('div');
@@ -36,11 +37,15 @@ export function createSalesReportScreen() {
     initReportListeners();
 }
 
+// Set up report generation and export buttons
 function initReportListeners() {
     document.getElementById('generateReport').addEventListener('click', displayReport);
     document.getElementById('exportReport').addEventListener('click', exportReport);
 }
 
+// Filter orders by date range
+// Calculate revenue and tax
+// Show category breakdown
 function displayReport() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -85,6 +90,8 @@ function displayReport() {
         `).join('');
 }
 
+// Create CSV content
+// Download report file
 function exportReport() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;

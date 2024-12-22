@@ -2,6 +2,9 @@ import { createFarmer, readFarmers, deleteFarmer, updateFarmer } from "../../uti
 import { ViewManager } from "../../utils/view-manager.util.js";
 import { exportToCSV } from "../../utils/export.util.js";
 
+// Creates form for adding new farmers
+// Shows list of all farmers with their details
+// Has update modal for editing farmer info
 function createFarmerScreen() {
     const mainContent = document.querySelector('.main-content');
     const farmerScreen = document.createElement('div');
@@ -50,7 +53,11 @@ function createFarmerScreen() {
     initModalClosing();
 }
 
+// Handles new farmer form submissions
+// Validates farmer details before saving
+// Shows success/error messages
 function initExportListener() {
+    
     document.getElementById('exportBtn').addEventListener('click', () => {
         const farmers = readFarmers();
         exportToCSV(farmers);
@@ -74,6 +81,8 @@ function initFarmerListListeners() {
     });
 }
 
+// Opens update modal with farmer's current info
+// Lets user edit and save changes
 function handleUpdate(id) {
     const farmers = readFarmers();
     const farmer = farmers.find(f => f.id === id);
@@ -111,6 +120,9 @@ function initUpdateFormListener() {
     });
 }
 
+// Handles new farmer form submissions
+// Validates farmer details before saving
+// Shows success/error messages
 function initFarmerFormListener() {
     document.getElementById("farmerForm").addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -147,6 +159,8 @@ function showMessage(message, type) {
     setTimeout(() => messageDiv.remove(), 3000);
 }
 
+// Creates cards for each farmer showing their details
+// Each card has update and delete buttons
 function displayFarmers() {
     const farmers = readFarmers();
     const farmerList = document.getElementById("farmerList");

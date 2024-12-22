@@ -1,6 +1,7 @@
 import { createStorage, readStorages, updateStorage, deleteStorage } from '../../utils/storage.util.js';
 import { ViewManager } from '../../utils/view-manager.util.js';
 
+// Create storage screen with form and location list
 export function createStorageScreen() {
     const mainContent = document.querySelector('.main-content');
     const storageScreen = document.createElement('div');
@@ -59,6 +60,9 @@ function initStorageFormListener() {
     });
 }
 
+// List all storage locations
+// Show capacity and usage
+// Add update/delete buttons
 function displayStorages() {
     const storages = readStorages();
     const storageList = document.getElementById('storageList');
@@ -78,6 +82,9 @@ function displayStorages() {
     `).join('');
 }
 
+// Delete storage locations
+// Open update modal
+// Handle modal close events
 function initStorageListListeners() {
     document.getElementById('storageList').addEventListener('click', e => {
         const storageCard = e.target.closest('.storage-card');
@@ -108,6 +115,8 @@ function initStorageListListeners() {
     };
 }
 
+// Add current values to form
+// Used when update button clicked
 function fillUpdateStorageForm(storage) {
     document.getElementById('updateStorageId').value = storage.id;
     document.getElementById('updateStorageLocation').value = storage.location;
@@ -115,6 +124,9 @@ function fillUpdateStorageForm(storage) {
     document.getElementById('updateStorageMaxCapacity').value = storage.maxCapacity;
 }
 
+// Update storage details
+// Show success/error messages
+// Refresh storage list
 function initUpdateStorageFormListener() {
     document.getElementById('updateStorageForm').addEventListener('submit', e => {
         e.preventDefault();
@@ -157,6 +169,6 @@ export function showStorageScreen() {
         createStorageScreen();
     }
 
-    ViewManager.registerRefreshHandler('storageScreen', () => {displayStorages()});
+    ViewManager.registerRefreshHandler('storageScreen', () => { displayStorages() });
     ViewManager.showScreen('storageScreen');
 }

@@ -1,6 +1,9 @@
 import { createCustomer, readCustomers, updateCustomer, deleteCustomer } from '../../utils/customer.util.js';
 import { ViewManager } from '../../utils/view-manager.util.js';
 
+// Sets up new customer form
+// Shows list of existing customers
+// Creates update modal for editing
 export function createCustomerScreen() {
     const mainContent = document.querySelector('.main-content');
     const customerScreen = document.createElement('div');
@@ -47,6 +50,9 @@ export function createCustomerScreen() {
     displayCustomers();
 }
 
+// Handles new customer form submission
+// Validates customer info
+// Shows success/error feedback
 function initCustomerFormListener() {
     document.getElementById('customerForm').addEventListener('submit', e => {
         e.preventDefault();
@@ -72,6 +78,9 @@ function initCustomerFormListener() {
     });
 }
 
+// Shows all customers in card format
+// Each card shows contact and address info
+// Adds update/delete buttons to each card
 function displayCustomers() {
     const customers = readCustomers();
     const customerList = document.getElementById('customerList');
@@ -132,6 +141,8 @@ function initCustomerListListeners() {
     };
 }
 
+// Fills update modal with customer's current info
+// Called when update button is clicked
 function fillUpdateForm(customer) {
     document.getElementById('updateId').value = customer.id;
     document.getElementById('updateName').value = customer.name;
