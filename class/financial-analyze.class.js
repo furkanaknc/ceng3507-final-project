@@ -10,6 +10,7 @@ export class FinancialAnalysis {
         this.calculateFinancial();
     }
 
+    // Calculate total income, expenses, tax and profit
     calculateFinancial() {
         // Calculate total income from orders
         this.totalIncome = this.orders.reduce((sum, order) =>
@@ -26,6 +27,7 @@ export class FinancialAnalysis {
         this.netProfit = this.totalIncome - this.totalExpense - this.taxAmount;
     }
 
+    // Get financial summary report
     getFinancialReport() {
         return {
             totalIncome: this.totalIncome.toFixed(2),
@@ -65,11 +67,11 @@ export class FinancialAnalysis {
         document.body.removeChild(link);
     }
 
-
+    // Export detailed financial report as CSV
     exportDetailedCSV() {
         const report = this.getFinancialReport();
         
-        // Calculate sales by category and type
+        // Group sales by category and type
         const salesByCategoryAndType = {}; 
         this.orders.forEach(order => {
             const key = `${order.productCategory}-${order.productType}`;
@@ -145,6 +147,7 @@ export class FinancialAnalysis {
         ].map(row => row.join(','))
         .join('\n');
 
+        // Generate CSV content and download
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -154,6 +157,7 @@ export class FinancialAnalysis {
         link.click();
         document.body.removeChild(link);
     }
+
     getCategoryTotals() {
         const totals = {};
         this.orders.forEach(order => {

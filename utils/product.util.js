@@ -6,18 +6,20 @@ import { readStorages } from "./storage.util.js";
 import { Storage } from "../class/storage.class.js";
 import { saveStorages } from "../storage/storage.storage.js";
 
+// Create new product with storage allocation and raw material check
 export function createProduct(category, price, type, storageId, customWeight = null, quantity = 0) {
-    console.log('category:',category,'price:', price, 'type:',type, 'storageId:',storageId, 'customWeight:',customWeight, 'quantity:',quantity);
-    
+    // Validate required fields
     if (!category || !price || !type || !storageId) {
         throw new Error('All fields are required');
     }
 
+    // Check quantity is valid
     quantity = Number(quantity);
     if (isNaN(quantity) || quantity < 0) {
         throw new Error('Quantity must be a valid positive number');
     }
 
+    // Check for duplicate products
     const products = fetchProducts();
     const existingProduct = products.find(p =>
         p.category === category &&

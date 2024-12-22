@@ -7,16 +7,20 @@ import { readStorages } from './storage.util.js';
 import { saveStorages } from '../storage/storage.storage.js';
 import { Storage } from '../class/storage.class.js';
 
+// Create new order and update storage/stock
 export function createOrder(customerId, productId, quantity) {
+    // Validate order quantity
     if (!quantity || quantity <= 0) {
         throw new Error('Quantity must be greater than 0');
     }
 
+    // Check if customer exists
     const customers = readCustomers();
     if (!customers.find(c => c.id === customerId)) {
         throw new Error('Invalid customer ID');
     }
 
+    // Find product in catalog
     const products = readProducts();
     const product = products.find(p => p.id === productId);
     
@@ -86,12 +90,14 @@ export function createOrder(customerId, productId, quantity) {
     }
 }
 
+// Update order details and adjust stock if needed
 export function updateOrder(id, updatedData) {
     const orders = fetchOrders();
     const index = orders.findIndex(o => o.id === id);
     
     if (index === -1) throw new Error('Order not found');
 
+    // Update stock if quantity changed
     const currentOrder = orders[index];
     const productId = currentOrder.productId; 
 
@@ -110,6 +116,7 @@ export function updateOrder(id, updatedData) {
     return orders[index];
 }
 
+// Change order status (PENDING, COMPLETED, CANCELLED)
 export function updateOrderStatus(id, newStatus) {
     const orders = fetchOrders();
     const index = orders.findIndex(o => o.id === id);
@@ -121,16 +128,19 @@ export function updateOrderStatus(id, newStatus) {
     return orders[index];
 }
 
+// Get orders filtered by status
 export function getOrdersByStatus(status) {
     const orders = fetchOrders();
     return status ? orders.filter(o => o.status === status) : orders;
 }
 
+// Get all orders for specific customer
 export function getOrdersByCustomer(customerId) {
     const orders = fetchOrders();
     return orders.filter(o => o.customerId === customerId);
 }
 
+// Get all orders with hydrated Order objects
 export function readOrders() {
     const orders = fetchOrders();
     return orders.map(order => {
@@ -149,6 +159,7 @@ export function readOrders() {
     });
 }
 
+// Calculate total revenue with optional date/category filters
 export function calculateRevenue(startDate = null, endDate = null, category = null) {
     const orders = fetchOrders();
     return orders
@@ -162,7 +173,7 @@ export function calculateRevenue(startDate = null, endDate = null, category = nu
         .reduce((total, order) => total + order.totalPrice, 0);
 }
 
-
+// Search orders by customer name, category or status
 export function searchOrders(query) {
     const orders = fetchOrders();
     const searchTerm = query.toLowerCase();
@@ -174,6 +185,7 @@ export function searchOrders(query) {
     );
 }
 
+// Delete order and revert stock changes
 export function deleteOrder(id) {
     const orders = fetchOrders();
     const index = orders.findIndex(o => o.id === id);

@@ -7,15 +7,16 @@ import { saveStorages, fetchStorages } from "../storage/storage.storage.js";
 import { Storage } from "../class/storage.class.js";
 import { readStorages } from "./storage.util.js";
 
+// Create new purchase and update storage with raw materials
 export function createPurchase(farmerId, storageId, date, quantity, pricePerKg) {
-
+    // Basic input validation
     if (!farmerId) throw new Error('Farmer is required');
     if (!storageId) throw new Error('Storage is required');
     if (!date) throw new Error('Date is required');
     if (!quantity || quantity <= 0) throw new Error('Valid quantity is required');
     if (!pricePerKg || pricePerKg <= 0) throw new Error('Valid price per kg is required');
 
-
+    // Check if farmer exists
     const farmers = readFarmers();
 
     const farmerExists = farmers.some(farmer => farmer.id === farmerId);
@@ -23,16 +24,18 @@ export function createPurchase(farmerId, storageId, date, quantity, pricePerKg) 
         throw new Error('Invalid farmer ID');
     }
 
+    // Check storage capacity
     const storages = fetchStorages().map(s => Object.assign(new Storage(), s));
     const storage = storages.find(s => s.id === storageId);
     if (!storage) throw new Error('Storage not found');
 
+    // Calculate available space
     const availableCapacity = storage.maxCapacity - storage.currentCapacity;
     if (quantity > availableCapacity) {
         throw new Error(`Insufficient storage capacity. Only ${availableCapacity}kg available in ${storage.name}`);
     }
 
-
+    // Create new purchase record
     const purchases = fetchPurchases();
     const newId = purchases.length ? Math.max(...purchases.map(p => p.id)) + 1 : 1;
 
@@ -75,15 +78,18 @@ export function createPurchase(farmerId, storageId, date, quantity, pricePerKg) 
     }
 }
 
+// Get all purchases
 export function readPurchases() {
     return fetchPurchases();
 }
 
+// Get purchases for specific farmer
 export function readPurchasesByFarmer(farmerId) {
     const purchases = fetchPurchases();
     return purchases.filter(purchase => purchase.farmerId === farmerId);
 }
 
+// Update purchase details and adjust storage if needed
 export function updatePurchase(id, updatedData) {
     const { quantity, ...allowedUpdates } = updatedData;
 
@@ -142,6 +148,7 @@ export function updatePurchase(id, updatedData) {
     return purchases[index];
 }
 
+// Delete purchase and update storage/raw materials
 export function deletePurchase(id) {
     const purchases = fetchPurchases();
     const purchase = purchases.find(p => p.id === id);
