@@ -1,3 +1,4 @@
+// Product types for inventory management
 export const ProductType = Object.freeze({
     RAW: 'RAW',
     FROZEN: 'FROZEN',
@@ -5,7 +6,7 @@ export const ProductType = Object.freeze({
     ORGANIC: 'ORGANIC'
 });
 
-// Add helper function to validate product type
+// Check if given type exists in ProductType enum
 export function isValidProductType(type) {
     return Object.values(ProductType).includes(type);
 }

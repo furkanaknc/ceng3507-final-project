@@ -1,3 +1,4 @@
+// Product categories by package size
 export const ProductCategory = Object.freeze({
     SMALL: 'SMALL',
     MEDIUM: 'MEDIUM',
@@ -8,6 +9,7 @@ export const ProductCategory = Object.freeze({
     PREMIUM: 'PREMIUM'
 });
 
+// Standard weights (in grams) for each category
 export const CategoryWeights = Object.freeze({
     SMALL: 100,
     MEDIUM: 250,
