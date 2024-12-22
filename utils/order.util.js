@@ -72,6 +72,7 @@ export function createOrder(customerId, productId, quantity) {
             customerId,
             productId,
             product.category,
+            product.type,
             quantity,
             product.price,
             OrderStatus.PENDING
@@ -133,17 +134,16 @@ export function getOrdersByCustomer(customerId) {
 export function readOrders() {
     const orders = fetchOrders();
     return orders.map(order => {
-        // Convert JSON data to Order instance
         const orderObj = new Order(
             order.id,
             order.customerId,
             order.productId,
             order.productCategory,
+            order.productType,
             order.quantity,
             order.unitPrice,
             order.status
         );
-        // Preserve the original order date
         orderObj.orderDate = order.orderDate;
         return orderObj;
     });

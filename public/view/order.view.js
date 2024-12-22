@@ -17,8 +17,9 @@ function getProductOptions() {
     return products.map(product =>
         `<option value="${product.id}" 
             data-category="${product.category}"
+            data-type="${product.type}"
             data-price="${product.price}">
-            ${product.category} - $${product.getFormattedPrice()}
+            ${product.category} - ${product.type} - $${product.getFormattedPrice()}
         </option>`
     ).join('');
 }
@@ -249,7 +250,7 @@ function displayOrders() {
                 <p>
                     <strong>Customer:</strong> ${customer?.name || 'Unknown'}<br>
                     <strong>Contact:</strong> ${customer?.contact.phone || 'N/A'}<br>
-                    <strong>Product:</strong> ${order.productCategory}<br>
+                    <strong>Product:</strong> ${order.productCategory} - ${order.productType}<br>
                     <strong>Quantity:</strong> ${order.quantity}<br>
                     <strong>Unit Price:</strong> $${order.unitPrice.toFixed(2)}<br>
                     <strong>Total:</strong> $${order.totalPrice.toFixed(2)}<br>

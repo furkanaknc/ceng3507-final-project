@@ -16,6 +16,8 @@ export function createFinancialScreen() {
             <input type="date" id="endDate" placeholder="End Date">
             <input type="number" id="taxRate" value="18" min="0" max="100" step="0.1">
             <button id="generateReport">Generate Report</button>
+            <button id="exportCSV">Export CSV</button>
+            <button id="exportDetailedCSV">Export Detailed CSV</button>
         </div>
 
         <div class="financial-summary">
@@ -40,6 +42,7 @@ export function createFinancialScreen() {
 
     mainContent.appendChild(financialScreen);
     initFinancialListeners();
+    displayFinancialReport();
 }
 
 function displayFinancialReport() {
@@ -66,29 +69,57 @@ function filterByDateRange(items, startDate, endDate) {
     return items.filter(item => {
         const itemDate = new Date(item.date || item.orderDate);
         return (!startDate || itemDate >= new Date(startDate)) &&
-               (!endDate || itemDate <= new Date(endDate));
+            (!endDate || itemDate <= new Date(endDate));
     });
 }
 
 function initFinancialListeners() {
-    document.getElementById('generateReport').addEventListener('click', displayFinancialReport);
-    
-    // Add tax rate change listener
-    document.getElementById('taxRate').addEventListener('change', () => {
-        displayFinancialReport();
-    });
-    
-    // Add input event for real-time updates
-    document.getElementById('taxRate').addEventListener('input', () => {
-        displayFinancialReport();
-    });
+    const generateBtn = document.getElementById('generateReport');
+    const taxRate = document.getElementById('taxRate');
+
+    if (generateBtn) {
+        generateBtn.addEventListener('click', displayFinancialReport);
+    }
+
+    if (taxRate) {
+        taxRate.addEventListener('change', displayFinancialReport);
+        taxRate.addEventListener('input', displayFinancialReport);
+    }
+
+    const exportCSVBtn = document.getElementById('exportCSV');
+
+    if (exportCSVBtn) {
+        exportCSVBtn.addEventListener('click', () => {
+            const analysis = new FinancialAnalysis(
+                filterByDateRange(readOrders(), startDate.value, endDate.value),
+                filterByDateRange(readPurchases(), startDate.value, endDate.value),
+                Number(document.getElementById('taxRate').value) / 100
+            );
+            analysis.exportToCSV();
+        });
+    }
+
+    const exportDetailedCSVBtn = document.getElementById('exportDetailedCSV');
+
+    if (exportDetailedCSVBtn) {
+        exportDetailedCSVBtn.addEventListener('click', () => {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const analysis = new FinancialAnalysis(
+                filterByDateRange(readOrders(), startDate, endDate),
+                filterByDateRange(readPurchases(), startDate, endDate),
+                Number(document.getElementById('taxRate').value) / 100
+            );
+            analysis.exportDetailedCSV();
+        });
+    }
 }
 
 export function showFinancialScreen() {
     if (!document.getElementById('financialScreen')) {
         createFinancialScreen();
     }
-    
+
     ViewManager.registerRefreshHandler('financialScreen', displayFinancialReport);
     ViewManager.showScreen('financialScreen');
 }
