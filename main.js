@@ -15,8 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
     menuToggle.innerHTML = '☰';
     document.body.appendChild(menuToggle);
 
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    document.body.appendChild(overlay);
+
     menuToggle.addEventListener('click', () => {
         document.querySelector('.sidebar').classList.toggle('active');
+        menuToggle.style.display = 'none'; // Hide toggle when sidebar is active
+    });
+
+    overlay.addEventListener('click', () => {
+        document.querySelector('.sidebar').classList.remove('active');
+        menuToggle.style.display = 'block'; // Show toggle when sidebar is closed
     });
 
     document.getElementById("openFarmerBtn").addEventListener("click", showFarmerScreen);
