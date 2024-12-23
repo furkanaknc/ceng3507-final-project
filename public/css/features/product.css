@@ -152,3 +152,32 @@
 #updateProductForm button:hover {
     background-color: #2980b9;
 }
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    animation: slideIn 0.3s ease;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+.alert h4 {
+    margin-bottom: 0.5rem;
+    color: inherit;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

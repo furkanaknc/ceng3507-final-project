@@ -326,6 +326,27 @@ function showMessage(message, type) {
     setTimeout(() => messageDiv.remove(), 3000);
 }
 
+function checkLowStockProducts() {
+    const products = readProducts();
+    const lowStockProducts = products.filter(product => product.getStockStatus() === 'low');
+    
+    if (lowStockProducts.length > 0) {
+        const alertMessage = `Low Stock Alert:\n${lowStockProducts.map(p => 
+            `- ${p.category} ${p.type}: ${p.quantity} packages remaining`
+        ).join('\n')}`;
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-warning';
+        alertDiv.innerHTML = `
+            <h4>⚠️ Low Stock Warning</h4>
+            <p>${alertMessage}</p>
+        `;
+        
+        const productForm = document.getElementById('productForm');
+        productForm.insertAdjacentElement('beforebegin', alertDiv);
+    }
+}
+
 export function showProductScreen() {
     if (!document.getElementById('productScreen')) {
         createProductScreen();
@@ -333,6 +354,7 @@ export function showProductScreen() {
 
     ViewManager.registerRefreshHandler('productScreen', () => {
         displayProducts();
+        checkLowStockProducts();
     });
 
     ViewManager.showScreen('productScreen');
